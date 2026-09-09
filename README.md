@@ -1,0 +1,2 @@
+# Emergent
+Discovering emerging trends
