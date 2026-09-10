@@ -16,7 +16,8 @@ describe("readingPathPrompt", () => {
     const p = readingPathPrompt("RAG", [{ openalexId: "W1", title: "T", year: "2020", cited_by_count: 5 }]);
     expect(p).toContain("RAG");
     expect(p).toContain("W1");
-    expect(p).toContain("JSON only");
+    expect(p).toContain("single JSON object");
+    expect(p).not.toContain('{"path"');
   });
 });
 
@@ -63,6 +64,21 @@ describe("extractJson", () => {
     const known = new Set(["W1"]);
     const raw = 'Here you go: {"path":[{"openalexId":"W1","why":"start here"}]} Enjoy!';
     expect(parseReadingPath(raw, known)).toEqual([{ openalexId: "W1", why: "start here" }]);
+  });
+});
+
+describe("extractJsonBlocks", () => {
+  it("prefers the last block when the model echoes instructions first", () => {
+    const known = new Set(["W9"]);
+    const raw =
+      'We must output JSON only: {"path":[{"openalexId":"...","why":"..."}]}. ' +
+      'Here is my answer: {"path":[{"openalexId":"W9","why":"the real pick"}]}';
+    expect(parseReadingPath(raw, known)).toEqual([{ openalexId: "W9", why: "the real pick" }]);
+  });
+  it("still rejects echo-only replies with placeholder ids", () => {
+    const known = new Set(["W9"]);
+    const raw = 'We must output JSON only: {"path":[{"openalexId":"...","why":"..."}]}.';
+    expect(() => parseReadingPath(raw, known)).toThrow("bad-ai-shape");
   });
 });
 
