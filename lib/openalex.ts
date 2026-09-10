@@ -9,11 +9,11 @@ function authParams(): string {
   return p.toString();
 }
 
-export async function openAlex(path: string, params: Record<string, string> = {}) {
+export async function openAlex(path: string, params: Record<string, string> = {}, timeoutMs = 15000) {
   const qs = new URLSearchParams(params);
   const auth = authParams();
   const url = `${BASE}${path}?${qs.toString()}${auth ? `&${auth}` : ""}`;
-  const res = await fetch(url, { next: { revalidate: 300 } });
+  const res = await fetch(url, { next: { revalidate: 300 }, signal: AbortSignal.timeout(timeoutMs) });
   if (!res.ok) throw new Error(`OpenAlex ${res.status} for ${path}`);
   return res.json();
 }

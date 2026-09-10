@@ -23,4 +23,11 @@ describe("openAlex client", () => {
     );
     await expect(openAlex("/works")).rejects.toThrow("OpenAlex 500");
   });
+  it("passes a timeout signal so slow upstreams cannot hang", async () => {
+    const fakeFetch = vi.fn(async () => ({ ok: true, json: async () => ({}) }));
+    vi.stubGlobal("fetch", fakeFetch);
+    await openAlex("/works", {}, 1234);
+    const init = vi.mocked(fetch).mock.calls[0][1] as RequestInit;
+    expect(init.signal).toBeInstanceOf(AbortSignal);
+  });
 });

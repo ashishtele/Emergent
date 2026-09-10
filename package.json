@@ -22,7 +22,6 @@
     "next": "14.2.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "recharts": "^2.13.0",
     "zod": "^4.6.1"
   },
   "devDependencies": {
@@ -31,6 +30,8 @@
     "@types/react-dom": "^18.3.0",
     "@vitest/coverage-v8": "^3.2.7",
     "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.35",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.0",
     "postcss": "^8.4.47",
@@ -42,10 +43,11 @@
     "vitest": "^3.2.7"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,mjs,css}": [
+    "*.{ts,tsx,js,mjs}": [
+      "eslint --fix",
       "prettier --write"
     ],
-    "*.{json,yaml,yml,md}": [
+    "*.{css,json,yaml,yml,md}": [
       "prettier --write"
     ]
   }
