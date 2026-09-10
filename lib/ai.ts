@@ -16,6 +16,29 @@ export function isAiConfigured() {
   return Boolean(process.env.AI_API_KEY);
 }
 
+// Maps upstream LLM failures to user-facing handling.
+// Returns "busy" for transient overload/rate-limit (worth one retry + friendly message).
+export function classifyAiError(e: any): "busy" | "fatal" {
+  const status = e?.status ?? e?.response?.status;
+  if (status === 429 || status === 502 || status === 503 || status === 529) return "busy";
+  return "fatal";
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// One retry with backoff for transient provider overload.
+export async function chatWithRetry(call: () => Promise<string>, retries = 1): Promise<string> {
+  try {
+    return await call();
+  } catch (e) {
+    if (retries > 0 && classifyAiError(e) === "busy") {
+      await sleep(2000);
+      return call();
+    }
+    throw e;
+  }
+}
+
 export function aiClient() {
   const { baseURL, apiKey, model } = aiConfig();
   const client = new OpenAI({

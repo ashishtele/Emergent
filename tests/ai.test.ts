@@ -1,5 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { readingPathPrompt, parseReadingPath, cacheKey, isAiConfigured, aiConfig, aiClient } from "../lib/ai";
+import {
+  readingPathPrompt,
+  parseReadingPath,
+  cacheKey,
+  isAiConfigured,
+  aiConfig,
+  aiClient,
+  classifyAiError,
+  chatWithRetry,
+} from "../lib/ai";
 
 describe("readingPathPrompt", () => {
   it("embeds topic and candidates", () => {
@@ -44,6 +53,34 @@ describe("cacheKey", () => {
 describe("isAiConfigured", () => {
   it("is false without a key", () => {
     expect(isAiConfigured()).toBe(false);
+  });
+});
+
+describe("classifyAiError/chatWithRetry", () => {
+  it("treats overload statuses as busy", () => {
+    for (const s of [429, 502, 503, 529]) expect(classifyAiError({ status: s })).toBe("busy");
+    expect(classifyAiError({ status: 401 })).toBe("fatal");
+    expect(classifyAiError(new Error("boom"))).toBe("fatal");
+  });
+  it("retries once on busy then returns", async () => {
+    let n = 0;
+    const out = await chatWithRetry(() => {
+      n += 1;
+      if (n === 1) return Promise.reject({ status: 529 });
+      return Promise.resolve("ok");
+    });
+    expect(out).toBe("ok");
+    expect(n).toBe(2);
+  });
+  it("does not retry fatal errors", async () => {
+    let n = 0;
+    await expect(
+      chatWithRetry(() => {
+        n += 1;
+        return Promise.reject({ status: 401 });
+      }),
+    ).rejects.toEqual({ status: 401 });
+    expect(n).toBe(1);
   });
 });
 

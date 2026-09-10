@@ -6,6 +6,8 @@ import {
   readingPathPrompt,
   parseReadingPath,
   cacheKey,
+  chatWithRetry,
+  classifyAiError,
   type PathPaper,
 } from "@/lib/ai";
 import { readingPathSchema } from "@/lib/validators";
@@ -51,14 +53,18 @@ export async function POST(req: NextRequest) {
     }));
     if (papers.length === 0) return apiError("No papers found for this topic", 404);
 
-    const completion = await client.chat.completions.create({
-      model,
-      messages: [{ role: "user", content: readingPathPrompt(topic, papers) }],
-      temperature: 0.3,
-      max_tokens: 600,
-      response_format: { type: "json_object" },
-    });
-    const raw = completion.choices[0]?.message?.content ?? "";
+    const completion = await chatWithRetry(() =>
+      client.chat.completions
+        .create({
+          model,
+          messages: [{ role: "user", content: readingPathPrompt(topic, papers) }],
+          temperature: 0.3,
+          max_tokens: 600,
+          response_format: { type: "json_object" },
+        })
+        .then((c) => c.choices[0]?.message?.content ?? ""),
+    );
+    const raw = completion;
     const path = parseReadingPath(raw, new Set(papers.map((p) => p.openalexId)));
     const byId = new Map(papers.map((p) => [p.openalexId, p]));
     const enriched = path.map((s) => ({ ...s, ...byId.get(s.openalexId) }));
@@ -75,7 +81,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ topic, cached: false, path: enriched });
   } catch (e: any) {
+    console.error("reading-path failed:", e?.status ?? e?.message ?? e);
     if (e?.message === "bad-ai-shape") return apiError("AI returned an unusable answer. Try again.", 502);
+    if (classifyAiError(e) === "busy")
+      return apiError("AI provider is busy right now. Try again in a minute.", 502);
     return apiError();
   }
 }
