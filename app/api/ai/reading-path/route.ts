@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
           model,
           messages: [{ role: "user", content: readingPathPrompt(topic, papers) }],
           temperature: 0.3,
-          max_tokens: 600,
+          max_tokens: 1500,
           response_format: { type: "json_object" },
         })
         .then((c) => c.choices[0]?.message?.content ?? ""),

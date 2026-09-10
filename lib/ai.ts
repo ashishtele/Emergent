@@ -69,7 +69,7 @@ export function readingPathPrompt(topic: string, papers: PathPaper[]): string {
   return [
     `You are a research guide. Topic: ${topic}.`,
     `From the candidate papers below, pick the 5 that form the best reading path ordered from foundational to cutting-edge.`,
-    `Reply with a single JSON object and nothing else. It must have one key, "path", whose value is an array of exactly 5 items in reading order.`,
+    `Reply with a single JSON object and nothing else: no preamble, no explanation, no thinking out loud. It must have one key, "path", whose value is an array of exactly 5 items in reading order.`,
     `Each item has two string fields: "openalexId" copied exactly from the candidate list, and "why", one sentence under 25 words on why to read it and where it fits.`,
     `Candidates:\n${list}`,
   ].join("\n");
