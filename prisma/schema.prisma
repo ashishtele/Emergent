@@ -1,0 +1,93 @@
+// Emergent ORM models — mirrors PRD section 15.
+// Supabase Auth owns auth.users; we link via user_id (uuid).
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Paper {
+  id             String        @id @default(cuid())
+  openalexId     String        @unique @map("openalex_id")
+  title          String
+  abstract       String?
+  publicationDate DateTime?    @map("publication_date")
+  doi            String?
+  citationCount  Int           @default(0) @map("citation_count")
+  isOpenAccess   Boolean       @default(false) @map("is_open_access")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  authors        PaperAuthor[]
+  topics         PaperTopic[]
+  savedBy        SavedPaper[]
+
+  @@map("papers")
+}
+
+model Author {
+  id            String        @id @default(cuid())
+  openalexId    String        @unique @map("openalex_id")
+  name          String
+  orcid         String?
+  institutionId String?       @map("institution_id")
+  institution   Institution?  @relation(fields: [institutionId], references: [id])
+  papers        PaperAuthor[]
+
+  @@map("authors")
+}
+
+model Institution {
+  id         String   @id @default(cuid())
+  openalexId String   @unique @map("openalex_id")
+  name       String
+  country    String?
+  type       String?
+  authors    Author[]
+
+  @@map("institutions")
+}
+
+model Topic {
+  id         String       @id @default(cuid())
+  openalexId String       @unique @map("openalex_id")
+  name       String
+  field      String?
+  domain     String?
+  papers     PaperTopic[]
+
+  @@map("topics")
+}
+
+model PaperAuthor {
+  paperId  String @map("paper_id")
+  authorId String @map("author_id")
+  paper    Paper  @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  author   Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@id([paperId, authorId])
+  @@map("paper_authors")
+}
+
+model PaperTopic {
+  paperId String @map("paper_id")
+  topicId String @map("topic_id")
+  paper   Paper  @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@id([paperId, topicId])
+  @@map("paper_topics")
+}
+
+model SavedPaper {
+  userId    String   @map("user_id") @db.Uuid
+  paperId   String   @map("paper_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  paper     Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+
+  @@id([userId, paperId])
+  @@map("saved_papers")
+}

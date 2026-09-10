@@ -1,0 +1,74 @@
+openapi: 3.1.0
+info:
+  title: Emergent API
+  version: 0.1.0
+  description: Next.js routes backed by OpenAlex, cached in Postgres/Supabase. See PRD section 16.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/search:
+    get:
+      summary: Global search
+      parameters:
+        - { name: q, in: query, required: true, schema: { type: string, maxLength: 200 } }
+        - {
+            name: type,
+            in: query,
+            schema: { type: string, enum: [works, authors, institutions, topics], default: works },
+          }
+        - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+        - { name: oa, in: query, schema: { type: boolean } }
+      responses:
+        "200": { description: OpenAlex list response }
+        "400": { description: Invalid query }
+        "503": { description: OpenAlex unavailable }
+  /api/papers/{id}:
+    get:
+      summary: Paper detail
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Paper }
+        "503": { description: OpenAlex unavailable }
+    post:
+      summary: Save paper (auth required, backend phase)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "201": { description: Saved }
+        "401": { description: Unauthorized }
+    delete:
+      summary: Unsave paper
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "204": { description: Removed }
+  /api/authors/{id}:
+    get:
+      summary: Researcher profile
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Author }
+        "503": { description: OpenAlex unavailable }
+  /api/institutions/{id}:
+    get:
+      summary: Institution profile
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Institution }
+        "503": { description: OpenAlex unavailable }
+  /api/topics/{id}:
+    get:
+      summary: Topic detail
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Topic }
+        "503": { description: OpenAlex unavailable }
+  /api/topics/trending:
+    get:
+      summary: Trending topics by growth rate
+      responses:
+        "200": { description: Ranked topics with growth_pct }

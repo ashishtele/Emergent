@@ -1,0 +1,2 @@
+# Pre-push: rescan everything about to leave the machine.
+node scripts/scan-secrets.mjs --push || exit 1
