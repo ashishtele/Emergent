@@ -69,10 +69,43 @@ export function readingPathPrompt(topic: string, papers: PathPaper[]): string {
   return [
     `You are a research guide. Topic: ${topic}.`,
     `From the candidate papers below, pick the 5 that form the best reading path ordered from foundational to cutting-edge.`,
-    `Reply with JSON only: {"path":[{"openalexId":"...","why":"one sentence on why to read this and where it fits"}]}.`,
-    `Only use papers from the list. Keep each "why" under 25 words.`,
+    `Reply with a single JSON object and nothing else. It must have one key, "path", whose value is an array of exactly 5 items in reading order.`,
+    `Each item has two string fields: "openalexId" copied exactly from the candidate list, and "why", one sentence under 25 words on why to read it and where it fits.`,
     `Candidates:\n${list}`,
   ].join("\n");
+}
+
+// Free-tier models often echo instructions (including any example JSON) before
+// answering. Collect every top-level balanced {...} block so callers can prefer
+// the LAST one — the actual answer — over echoed prompt text.
+export function extractJsonBlocks(raw: string): string[] {
+  const blocks: string[] = [];
+  let depth = 0;
+  let start = -1;
+  let inStr = false;
+  let esc = false;
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (ch === "\\") esc = true;
+      else if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') inStr = true;
+    else if (ch === "{") {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (ch === "}") {
+      depth--;
+      if (depth === 0 && start !== -1) {
+        blocks.push(raw.slice(start, i + 1));
+        start = -1;
+      }
+      if (depth < 0) depth = 0;
+    }
+  }
+  return blocks;
 }
 
 // Some providers ignore response_format and wrap JSON in prose.
@@ -85,25 +118,30 @@ export function extractJson(raw: string): string {
 }
 
 export function parseReadingPath(raw: string, knownIds: Set<string>) {
-  let parsed: { path?: Record<string, unknown>[] };
-  try {
-    parsed = JSON.parse(extractJson(raw));
-  } catch {
-    throw new Error("bad-ai-shape");
-  }
-  if (!Array.isArray(parsed.path)) throw new Error("bad-ai-shape");
   const known = new Set(Array.from(knownIds).map((id) => normId(id) ?? id));
-  const path = parsed.path
-    .map((s) => {
-      if (!s || typeof s !== "object") return null;
-      const id = normId(s.openalexId ?? s.id);
-      const why = String(s.why ?? s.reason ?? s.explanation ?? "").slice(0, 200);
-      return id && known.has(id) ? { openalexId: id, why } : null;
-    })
-    .filter((s): s is { openalexId: string; why: string } => s !== null)
-    .slice(0, 5);
-  if (path.length === 0) throw new Error("bad-ai-shape");
-  return path;
+  // Try blocks last-first: echoed prompt text comes before the real answer.
+  const blocks = extractJsonBlocks(raw);
+  if (blocks.length === 0) throw new Error("bad-ai-shape");
+  for (let i = blocks.length - 1; i >= 0; i--) {
+    let parsed: { path?: Record<string, unknown>[] };
+    try {
+      parsed = JSON.parse(blocks[i]);
+    } catch {
+      continue;
+    }
+    if (!Array.isArray(parsed.path)) continue;
+    const path = parsed.path
+      .map((s) => {
+        if (!s || typeof s !== "object") return null;
+        const id = normId(s.openalexId ?? s.id);
+        const why = String(s.why ?? s.reason ?? s.explanation ?? "").slice(0, 200);
+        return id && known.has(id) ? { openalexId: id, why } : null;
+      })
+      .filter((s): s is { openalexId: string; why: string } => s !== null)
+      .slice(0, 5);
+    if (path.length > 0) return path;
+  }
+  throw new Error("bad-ai-shape");
 }
 
 // Accepts short ids (W123), full OpenAlex URLs, any casing.
