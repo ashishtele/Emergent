@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
 
   const { client, model } = aiClient();
   const key = cacheKey(topic, model);
+  let raw = "";
   try {
     const hit = await db.aiCache.findUnique({ where: { key } });
     if (hit && hit.expiresAt > new Date()) {
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
         })
         .then((c) => c.choices[0]?.message?.content ?? ""),
     );
-    const raw = completion;
+    raw = completion;
     const path = parseReadingPath(raw, new Set(papers.map((p) => p.openalexId)));
     const byId = new Map(papers.map((p) => [p.openalexId, p]));
     const enriched = path.map((s) => ({ ...s, ...byId.get(s.openalexId) }));
@@ -82,7 +83,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ topic, cached: false, path: enriched });
   } catch (e: any) {
     console.error("reading-path failed:", e?.status ?? e?.message ?? e);
-    if (e?.message === "bad-ai-shape") return apiError("AI returned an unusable answer. Try again.", 502);
+    if (e?.message === "bad-ai-shape") {
+      console.error("reading-path unusable reply head:", String(raw).slice(0, 300));
+      return apiError("AI returned an unusable answer. Try again.", 502);
+    }
     if (classifyAiError(e) === "busy")
       return apiError("AI provider is busy right now. Try again in a minute.", 502);
     return apiError();

@@ -66,6 +66,22 @@ describe("extractJson", () => {
   });
 });
 
+describe("normId", () => {
+  it("accepts short ids, full URLs and any casing", async () => {
+    const { normId } = await import("../lib/ai");
+    expect(normId("W123")).toBe("W123");
+    expect(normId("https://openalex.org/w123")).toBe("W123");
+    expect(normId("https://openalex.org/W123/")).toBe("W123");
+    expect(normId("nope")).toBeNull();
+    expect(normId(42)).toBeNull();
+  });
+  it("parses steps with id/reason key variants", () => {
+    const known = new Set(["W1"]);
+    const raw = JSON.stringify({ path: [{ id: "https://openalex.org/W1", reason: "good" }] });
+    expect(parseReadingPath(raw, known)).toEqual([{ openalexId: "W1", why: "good" }]);
+  });
+});
+
 describe("isAiConfigured", () => {
   it("is false without a key", () => {
     expect(isAiConfigured()).toBe(false);
