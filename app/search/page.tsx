@@ -7,6 +7,34 @@ function shortId(u: string) {
   return u?.split("/").pop() ?? u;
 }
 
+function SearchBox({
+  value,
+  onChange,
+  onSearch,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  onSearch: (v: string) => void;
+}) {
+  return (
+    <form
+      className="flex gap-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (value.trim()) onSearch(value.trim());
+      }}
+    >
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Search papers, researchers, topics…"
+        className="w-full rounded border px-3 py-2"
+      />
+      <button className="rounded bg-black px-4 py-2 text-white">Search</button>
+    </form>
+  );
+}
+
 function Results() {
   const sp = useSearchParams();
   const router = useRouter();
@@ -16,6 +44,9 @@ function Results() {
   const oa = sp.get("oa") === "true";
   const [data, setData] = useState<any>(null);
   const [err, setErr] = useState("");
+  const [input, setInput] = useState(q);
+
+  useEffect(() => setInput(q), [q]);
 
   useEffect(() => {
     if (!q) return;
@@ -33,10 +64,17 @@ function Results() {
     router.push(`/search?${p.toString()}`);
   };
 
-  if (!q) return <p className="text-zinc-600">Enter a query above.</p>;
+  if (!q)
+    return (
+      <div className="space-y-3">
+        <SearchBox value={input} onChange={setInput} onSearch={(v) => nav({ q: v, page: "1" })} />
+        <p className="text-zinc-600">Type above to explore millions of papers, researchers and topics.</p>
+      </div>
+    );
 
   return (
     <div className="space-y-3">
+      <SearchBox value={input} onChange={setInput} onSearch={(v) => nav({ q: v, page: "1" })} />
       <div className="flex gap-1 text-sm">
         {TABS.map((t) => (
           <button
