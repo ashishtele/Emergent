@@ -75,8 +75,22 @@ export function readingPathPrompt(topic: string, papers: PathPaper[]): string {
   ].join("\n");
 }
 
+// Some providers ignore response_format and wrap JSON in prose.
+// Extract the largest {...} block before parsing.
+export function extractJson(raw: string): string {
+  const start = raw.indexOf("{");
+  const end = raw.lastIndexOf("}");
+  if (start === -1 || end <= start) throw new Error("bad-ai-shape");
+  return raw.slice(start, end + 1);
+}
+
 export function parseReadingPath(raw: string, knownIds: Set<string>) {
-  const parsed = JSON.parse(raw) as { path?: { openalexId?: string; why?: string }[] };
+  let parsed: { path?: { openalexId?: string; why?: string }[] };
+  try {
+    parsed = JSON.parse(extractJson(raw));
+  } catch {
+    throw new Error("bad-ai-shape");
+  }
   if (!Array.isArray(parsed.path)) throw new Error("bad-ai-shape");
   const path = parsed.path
     .filter((s) => s && typeof s.openalexId === "string" && knownIds.has(s.openalexId))
