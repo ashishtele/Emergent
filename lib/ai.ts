@@ -85,19 +85,32 @@ export function extractJson(raw: string): string {
 }
 
 export function parseReadingPath(raw: string, knownIds: Set<string>) {
-  let parsed: { path?: { openalexId?: string; why?: string }[] };
+  let parsed: { path?: Record<string, unknown>[] };
   try {
     parsed = JSON.parse(extractJson(raw));
   } catch {
     throw new Error("bad-ai-shape");
   }
   if (!Array.isArray(parsed.path)) throw new Error("bad-ai-shape");
+  const known = new Set(Array.from(knownIds).map((id) => normId(id) ?? id));
   const path = parsed.path
-    .filter((s) => s && typeof s.openalexId === "string" && knownIds.has(s.openalexId))
-    .slice(0, 5)
-    .map((s) => ({ openalexId: s.openalexId as string, why: String(s.why ?? "").slice(0, 200) }));
+    .map((s) => {
+      if (!s || typeof s !== "object") return null;
+      const id = normId(s.openalexId ?? s.id);
+      const why = String(s.why ?? s.reason ?? s.explanation ?? "").slice(0, 200);
+      return id && known.has(id) ? { openalexId: id, why } : null;
+    })
+    .filter((s): s is { openalexId: string; why: string } => s !== null)
+    .slice(0, 5);
   if (path.length === 0) throw new Error("bad-ai-shape");
   return path;
+}
+
+// Accepts short ids (W123), full OpenAlex URLs, any casing.
+export function normId(v: unknown): string | null {
+  if (typeof v !== "string") return null;
+  const m = v.trim().match(/(W\d+)\/?$/i);
+  return m ? m[1].toUpperCase() : null;
 }
 
 export function cacheKey(topic: string, model: string) {
