@@ -13,8 +13,17 @@ function sh(cmd) {
 }
 
 // 1. Real secret values from local (untracked) env must never appear in committed content.
+// Only keys that look secret-bearing (keys, tokens, passwords, connection strings) count:
+// plain config values (model IDs, emails, public URLs) are safe to document.
 // NEXT_PUBLIC_* values ship in the client bundle by design, so they are skipped.
-const PUBLIC_VALUES = new Set(["https://api.openalex.org"]);
+const PUBLIC_VALUES = new Set([
+  "https://api.openalex.org",
+  "https://openrouter.ai/api/v1",
+  "https://api.groq.com/openai/v1",
+  "https://api.openai.com/v1",
+  "http://localhost:11434/v1",
+]);
+const SECRET_KEY = /(KEY|SECRET|TOKEN|PASSWORD|PRIVATE|CONNECTION|DSN|URL)/i;
 function localSecrets() {
   const out = new Set();
   for (const f of [".env.local", ".env"]) {
@@ -23,6 +32,7 @@ function localSecrets() {
       const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*["']?([^"'#\s][^#\r\n]*?)["']?\s*$/);
       if (!m) continue;
       if (m[1].startsWith("NEXT_PUBLIC_")) continue;
+      if (!SECRET_KEY.test(m[1])) continue;
       const v = m[2].trim().replace(/\/$/, "");
       if (v.length >= 16 && !PLACEHOLDER.test(v) && !PUBLIC_VALUES.has(v)) out.add(v);
     }
@@ -33,7 +43,7 @@ function localSecrets() {
 // 2. Generic high-signal patterns (with placeholder allowlists).
 const PATTERNS = [
   { name: "private-key", re: /-----BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY-----/ },
-  { name: "openai-key", re: /\bsk-(live|proj|sess|test)-[A-Za-z0-9]{10,}/ },
+  { name: "openai-key", re: /\bsk-(live|proj|sess|test|or-v1)-[A-Za-z0-9]{10,}/ },
   {
     name: "supabase-service-role",
     re: /service_role[^A-Za-z0-9_].{10,}|SUPABASE_SERVICE_ROLE_KEY\s*=\s*["']?\S[^"'placeholder\s]{15,}/i,
