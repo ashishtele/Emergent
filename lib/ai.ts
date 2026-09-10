@@ -8,7 +8,7 @@ export function aiConfig() {
   return {
     baseURL: process.env.AI_BASE_URL ?? "https://openrouter.ai/api/v1",
     apiKey: process.env.AI_API_KEY ?? "",
-    model: process.env.AI_MODEL ?? "meta-llama/llama-3.3-70b-instruct:free",
+    model: process.env.AI_MODEL ?? "nvidia/nemotron-3-super-120b-a12b:free",
   };
 }
 

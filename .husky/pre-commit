@@ -7,8 +7,8 @@ fi
 # 2. Scan staged content for leaked secret values/patterns
 node scripts/scan-secrets.mjs || exit 1
 
-# 3. Format check on staged files (auto-fix via lint-staged)
-npx lint-staged || exit 1
+# 3. Format/lint staged files (no-stash: lint-staged stash/restore breaks on Windows)
+npx lint-staged --no-stash || exit 1
 
 # 4. Typecheck
 npx tsc --noEmit || exit 1
