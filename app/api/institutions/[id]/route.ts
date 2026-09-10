@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { openAlex } from "@/lib/openalex";
+import { idParamSchema } from "@/lib/validators";
+import { apiError, badRequest } from "@/lib/api-error";
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
-  const id = decodeURIComponent(params.id);
-  if (!id || id.length > 100) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+  const parsed = idParamSchema.safeParse({ id: decodeURIComponent(params.id) });
+  if (!parsed.success) return badRequest("Invalid id");
+  const id = parsed.data.id;
   try {
     const i: any = await openAlex(`/institutions/${encodeURIComponent(id)}`);
     const instId = i.id?.split("/").pop() ?? id;
@@ -27,6 +30,6 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       })),
     });
   } catch {
-    return NextResponse.json({ error: "Research data is temporarily unavailable." }, { status: 503 });
+    return apiError();
   }
 }

@@ -1,5 +1,6 @@
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 
 const TABS = ["works", "authors", "institutions", "topics"] as const;
@@ -112,12 +113,12 @@ function Results() {
                     ? `/institutions/${id}`
                     : `/topics/${id}`;
             return (
-              <a key={r.id} href={href} className="block rounded border bg-white p-3 hover:border-black">
+              <Link key={r.id} href={href} className="block rounded border bg-white p-3 hover:border-black">
                 <div className="font-medium">{r.title ?? r.display_name}</div>
                 <div className="text-xs text-zinc-500">
                   Cited by {r.cited_by_count ?? r.works_count ?? "—"}
                 </div>
-              </a>
+              </Link>
             );
           })}
           <div className="flex gap-2 text-sm">

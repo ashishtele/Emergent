@@ -1,0 +1,31 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx prettier --check .
+      - run: npx tsc --noEmit
+      - run: npx next lint
+      - run: npm run test:coverage
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      - run: npx prisma validate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      - run: npm run build
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres
+          DIRECT_URL: postgresql://postgres:postgres@localhost:5432/postgres
