@@ -1,4 +1,5 @@
 import { openAlex } from "@/lib/openalex";
+import ReadingPath from "@/components/ReadingPath";
 import Link from "next/link";
 
 function shortId(url: string) {
@@ -62,6 +63,7 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
           </div>
         </div>
       )}
+      <ReadingPath topic={topic.display_name} topicId={topicId} />
       <div>
         <div className="mb-1 text-sm font-semibold">Top papers</div>
         {topWorks.map((w: any) => (

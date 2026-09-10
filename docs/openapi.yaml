@@ -72,3 +72,10 @@ paths:
       summary: Trending topics by growth rate
       responses:
         "200": { description: Ranked topics with growth_pct }
+  /api/ai/reading-path:
+    post:
+      summary: AI reading path for a topic (auth required, cached 7 days)
+      responses:
+        "200": { description: Ordered path with why-read notes }
+        "401": { description: Sign in required }
+        "501": { description: AI not configured }
