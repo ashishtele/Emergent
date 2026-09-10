@@ -8,6 +8,7 @@ import {
   aiClient,
   classifyAiError,
   chatWithRetry,
+  extractJson,
 } from "../lib/ai";
 
 describe("readingPathPrompt", () => {
@@ -47,6 +48,21 @@ describe("cacheKey", () => {
   it("is case/space-insensitive and model-scoped", () => {
     expect(cacheKey(" RAG ", "m1")).toBe(cacheKey("rag", "m1"));
     expect(cacheKey("rag", "m1")).not.toBe(cacheKey("rag", "m2"));
+  });
+});
+
+describe("extractJson", () => {
+  it("strips prose around the JSON block", () => {
+    const out = extractJson('We need to pick 5. {"path":[]} Hope this helps.');
+    expect(out).toBe('{"path":[]}');
+  });
+  it("rejects text with no JSON block", () => {
+    expect(() => extractJson("just words, no braces")).toThrow("bad-ai-shape");
+  });
+  it("parses prose-wrapped paths end to end", () => {
+    const known = new Set(["W1"]);
+    const raw = 'Here you go: {"path":[{"openalexId":"W1","why":"start here"}]} Enjoy!';
+    expect(parseReadingPath(raw, known)).toEqual([{ openalexId: "W1", why: "start here" }]);
   });
 });
 
