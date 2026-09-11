@@ -15,3 +15,7 @@ export const readingPathSchema = z.object({
   topic: z.string().min(1).max(120),
   topicId: z.string().min(1).max(20).optional(),
 });
+
+export const briefSchema = z.object({
+  openalexId: z.string().min(1).max(20),
+});
