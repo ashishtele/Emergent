@@ -17,7 +17,7 @@ const ITEMS = {
 };
 
 describe("findCodeRepos (GitHub)", () => {
-  it("prefers exact arXiv-id matches sorted by stars", async () => {
+  it("prefers arXiv-id mentions sorted by stars", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({ ok: true, json: async () => ITEMS })),

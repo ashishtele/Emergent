@@ -45,8 +45,10 @@ export async function findCodeRepos(
   try {
     const arxiv = work.arxivId ?? arxivIdOf(work);
     if (arxiv) {
-      const exact = await search(`"${arxiv}"`, token);
-      if (exact.length > 0) return exact;
+      // Unquoted id matches readmes/descriptions mentioning the paper;
+      // stars-ranked so canonical implementations surface first.
+      const mentioned = await search(`${arxiv} in:readme in:description`, token);
+      if (mentioned.length > 0) return mentioned;
     }
     const words = (work.title ?? "")
       .toLowerCase()
