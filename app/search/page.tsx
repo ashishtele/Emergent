@@ -112,16 +112,28 @@ function Results() {
                   : type === "institutions"
                     ? `/institutions/${id}`
                     : `/topics/${id}`;
+            const isWork = type === "works";
+            const count = isWork ? (r.cited_by_count ?? 0) : (r.works_count ?? 0);
+            const unit = isWork ? "cites" : "works";
+            const kind =
+              type === "works"
+                ? "Paper"
+                : type === "authors"
+                  ? "Researcher"
+                  : type === "institutions"
+                    ? "Institution"
+                    : "Topic";
             return (
-              <Link key={r.id} href={href} className="card !p-4">
-                <div className="break-words font-medium leading-snug">{r.title ?? r.display_name}</div>
-                <div className="mt-1.5 flex items-center gap-2 text-xs text-ink/50">
-                  <span className="badge">
-                    {type === "works"
-                      ? `Cited by ${(r.cited_by_count ?? 0).toLocaleString()}`
-                      : `${(r.works_count ?? 0).toLocaleString()} works`}
-                  </span>
-                  <span className="capitalize">{type.slice(0, -1)}</span>
+              <Link key={r.id} href={href} className="card flex items-start justify-between gap-4 !p-4">
+                <div className="min-w-0">
+                  <div className="break-words font-medium leading-snug">{r.title ?? r.display_name}</div>
+                  <div className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                    {kind}
+                  </div>
+                </div>
+                <div className="w-20 shrink-0 text-right">
+                  <div className="font-display text-xl font-black tabular-nums">{count.toLocaleString()}</div>
+                  <div className="text-[11px] text-ink/40">{unit}</div>
                 </div>
               </Link>
             );
