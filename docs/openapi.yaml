@@ -86,3 +86,6 @@ paths:
         "200": { description: Brief plus fullText source flag }
         "401": { description: Sign in required }
         "501": { description: AI not configured }
+# Server-rendered enrichments (not API routes; all optional, degrade silently):
+# Semantic Scholar TLDRs, Unpaywall PDFs, Wikipedia summaries, arXiv preprints,
+# DOAJ journals, GitHub code links.
