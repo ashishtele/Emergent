@@ -1,5 +1,6 @@
 import { openAlex } from "@/lib/openalex";
 import ReadingPath from "@/components/ReadingPath";
+import ActivityBars from "@/components/ActivityBars";
 import Link from "next/link";
 
 function shortId(url: string) {
@@ -39,30 +40,7 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
       <h1 className="text-2xl font-bold">{topic.display_name}</h1>
       <p className="text-sm text-zinc-600">{topic.description}</p>
       <div className="text-xs text-zinc-500">{topic.works_count?.toLocaleString()} papers</div>
-      {activity.length > 0 && (
-        <div className="rounded border bg-white p-3">
-          <div className="mb-2 text-sm font-semibold">Research activity</div>
-          <div className="flex items-end gap-1">
-            {activity.map((a: any) => (
-              <div
-                key={a.year}
-                title={`${a.year}: ${a.count}`}
-                className="w-8 bg-black/80"
-                style={{
-                  height: `${Math.max(4, (a.count / Math.max(...activity.map((x: any) => x.count))) * 80)}px`,
-                }}
-              />
-            ))}
-          </div>
-          <div className="mt-1 flex gap-1 text-[10px] text-zinc-500">
-            {activity.map((a: any) => (
-              <span key={a.year} className="w-8">
-                {String(a.year).slice(2)}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      {activity.length > 0 && <ActivityBars activity={activity} />}
       <ReadingPath topic={topic.display_name} topicId={topicId} />
       <div>
         <div className="mb-1 text-sm font-semibold">Top papers</div>
