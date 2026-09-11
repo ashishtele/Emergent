@@ -13,8 +13,8 @@ export default function TermsMarquee() {
   if (terms.length === 0) return null;
   const row = [...terms, ...terms];
   return (
-    <div className="overflow-hidden border-y border-ink/10 py-3" aria-hidden="true">
-      <div className="marquee-track flex w-max gap-8 whitespace-nowrap font-display text-lg font-bold text-ink/30">
+    <div className="overflow-hidden border-y border-ink/10 py-3 dark:border-white/10" aria-hidden="true">
+      <div className="marquee-track flex w-max gap-8 whitespace-nowrap font-display text-lg font-bold text-ink/30 dark:text-paper/30">
         {row.map((t, i) => (
           <Link key={i} href={`/search?q=${encodeURIComponent(t)}`} className="hover:text-accent">
             #{t.replace(/\s+/g, "")}

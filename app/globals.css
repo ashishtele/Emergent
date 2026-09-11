@@ -57,22 +57,22 @@
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-ink/10 bg-white p-4 shadow-[0_1px_0_rgba(22,19,14,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-12px_rgba(22,19,14,0.25)];
+    @apply rounded-2xl border border-ink/10 bg-white p-4 shadow-[0_1px_0_rgba(22,19,14,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-12px_rgba(22,19,14,0.25)] dark:border-white/10 dark:bg-soot dark:shadow-none dark:hover:shadow-[0_12px_32px_-12px_rgba(0,0,0,0.8)];
   }
   .chip {
-    @apply rounded-full border border-ink/15 bg-white px-4 py-1.5 text-sm transition hover:border-ink hover:bg-ink hover:text-paper;
+    @apply rounded-full border border-ink/15 bg-white px-4 py-1.5 text-sm transition hover:border-ink hover:bg-ink hover:text-paper dark:border-white/15 dark:bg-soot dark:hover:border-paper dark:hover:bg-paper dark:hover:text-ink;
   }
   .chip-hot {
-    @apply rounded-full bg-ink px-4 py-1.5 text-sm text-paper transition hover:bg-accent;
+    @apply rounded-full bg-ink px-4 py-1.5 text-sm text-paper transition hover:bg-accent dark:bg-paper dark:text-ink dark:hover:bg-accent dark:hover:text-white;
   }
   .badge {
-    @apply rounded-full bg-ink/5 px-2.5 py-1 text-xs text-ink/70;
+    @apply rounded-full bg-ink/5 px-2.5 py-1 text-xs text-ink/70 dark:bg-white/10 dark:text-paper/70;
   }
   .btn-primary {
     @apply rounded-full bg-accent px-6 py-2.5 font-medium text-white transition hover:brightness-110 active:scale-95;
   }
   .field {
-    @apply w-full rounded-full border border-ink/15 bg-white px-5 py-3 outline-none placeholder:text-ink/40 focus:border-accent focus:ring-2 focus:ring-accent/30;
+    @apply w-full rounded-full border border-ink/15 bg-white px-5 py-3 outline-none placeholder:text-ink/40 focus:border-accent focus:ring-2 focus:ring-accent/30 dark:border-white/15 dark:bg-soot dark:placeholder:text-paper/40;
   }
   .section-title {
     @apply font-display text-2xl font-bold tracking-tight md:text-3xl;

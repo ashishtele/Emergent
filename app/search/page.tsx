@@ -69,7 +69,9 @@ function Results() {
     return (
       <div className="space-y-3">
         <SearchBox value={input} onChange={setInput} onSearch={(v) => nav({ q: v, page: "1" })} />
-        <p className="text-zinc-600">Type above to explore millions of papers, researchers and topics.</p>
+        <p className="text-ink/60 dark:text-paper/60">
+          Type above to explore millions of papers, researchers and topics.
+        </p>
       </div>
     );
 
@@ -99,7 +101,7 @@ function Results() {
       {!data && !err && <p>Loading…</p>}
       {data && (
         <>
-          <p className="text-sm text-zinc-600">
+          <p className="text-sm text-ink/60 dark:text-paper/60">
             {data.meta?.count?.toLocaleString()} results for “{q}”
           </p>
           {(data.results ?? []).map((r: any) => {
@@ -133,18 +135,18 @@ function Results() {
                 </div>
                 <div className="w-20 shrink-0 text-right">
                   <div className="font-display text-xl font-black tabular-nums">{count.toLocaleString()}</div>
-                  <div className="text-[11px] text-ink/40">{unit}</div>
+                  <div className="text-[11px] text-ink/40 dark:text-paper/40">{unit}</div>
                 </div>
               </Link>
             );
           })}
           <div className="flex gap-2 text-sm">
             {page > 1 && (
-              <button onClick={() => nav({ page: String(page - 1) })} className="rounded border px-3 py-1">
+              <button onClick={() => nav({ page: String(page - 1) })} className="chip">
                 ← Prev
               </button>
             )}
-            <button onClick={() => nav({ page: String(page + 1) })} className="rounded border px-3 py-1">
+            <button onClick={() => nav({ page: String(page + 1) })} className="chip">
               Next →
             </button>
           </div>

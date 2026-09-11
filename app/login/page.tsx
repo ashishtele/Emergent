@@ -38,7 +38,7 @@ export default function LoginPage() {
               setMode(m);
               setMsg("");
             }}
-            className={`rounded-full px-3 py-1 ${mode === m ? "bg-black text-white" : "border"}`}
+            className={mode === m ? "chip-hot" : "chip"}
           >
             {m === "otp" ? "Magic link" : m === "signup" ? "Sign up" : "Password"}
           </button>
@@ -63,7 +63,7 @@ export default function LoginPage() {
         {mode === "otp" ? "Send magic link" : mode === "signup" ? "Create account" : "Sign in"}
       </button>
       {msg && <p className="text-sm">{msg}</p>}
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-ink/50 dark:text-paper/50">
         Password sign-in sends no email — use it while magic links are rate-limited.
       </p>
     </div>

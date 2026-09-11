@@ -6,7 +6,7 @@ export default async function LibraryPage() {
   if (!isSupabaseConfigured()) {
     return (
       <div className="space-y-3">
-        <h1 className="text-2xl font-bold">⭐ My Library</h1>
+        <h1 className="font-display text-3xl font-black tracking-tight">⭐ My Library</h1>
         <p className="text-sm">
           Auth not configured. Add Supabase keys, then{" "}
           <Link href="/login" className="underline">
@@ -24,7 +24,7 @@ export default async function LibraryPage() {
   if (!user) {
     return (
       <div className="space-y-3">
-        <h1 className="text-2xl font-bold">⭐ My Library</h1>
+        <h1 className="font-display text-3xl font-black tracking-tight">⭐ My Library</h1>
         <p className="text-sm">
           <Link href="/login" className="underline">
             Sign in
@@ -46,10 +46,10 @@ export default async function LibraryPage() {
   }
   return (
     <div className="space-y-3">
-      <h1 className="text-2xl font-bold">⭐ My Library</h1>
-      {saved.length === 0 && <p className="text-sm text-zinc-500">No saved papers yet.</p>}
+      <h1 className="font-display text-3xl font-black tracking-tight">⭐ My Library</h1>
+      {saved.length === 0 && <p className="text-sm text-ink/50 dark:text-paper/50">No saved papers yet.</p>}
       {saved.map((s) => (
-        <div key={s.paperId} className="rounded border bg-white p-3 text-sm">
+        <div key={s.paperId} className="card !p-3 text-sm">
           {s.paper.title}
         </div>
       ))}

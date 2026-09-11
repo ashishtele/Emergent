@@ -18,7 +18,7 @@ export default function SaveButton({ id, title }: { id: string; title: string })
       <button onClick={save} className="btn-primary !px-5 !py-2 text-sm">
         Save Paper
       </button>
-      {msg && <span className="text-xs text-ink/60">{msg}</span>}
+      {msg && <span className="text-xs text-ink/60 dark:text-paper/60">{msg}</span>}
     </div>
   );
 }

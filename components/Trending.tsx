@@ -10,7 +10,7 @@ export default function Trending() {
       .then(setData)
       .catch(() => {});
   }, []);
-  if (!data) return <p className="text-sm text-ink/40">Loading trends…</p>;
+  if (!data) return <p className="text-sm text-ink/40 dark:text-paper/40">Loading trends…</p>;
   return (
     <div className="flex flex-wrap gap-2 text-sm">
       {(data.trending ?? []).map((t: any) => (

@@ -33,7 +33,7 @@ export default function Home() {
         <h1 className="mx-auto max-w-3xl font-display text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
           Explore the world&apos;s research.
         </h1>
-        <p className="mx-auto mt-5 max-w-xl text-ink/60 md:text-lg">
+        <p className="mx-auto mt-5 max-w-xl text-ink/60 md:text-lg dark:text-paper/60">
           Millions of papers, distilled into trends, people and reading paths. Start with a question.
         </p>
         <form action="/search" className="mx-auto mt-8 flex max-w-xl gap-2">
@@ -61,7 +61,7 @@ export default function Home() {
             <Reveal key={f.title} delay={i * 100}>
               <Link href={f.href} className="card block h-full">
                 <div className="font-display text-lg font-bold">{f.title}</div>
-                <p className="mt-1 text-sm text-ink/60">{f.body}</p>
+                <p className="mt-1 text-sm text-ink/60 dark:text-paper/60">{f.body}</p>
               </Link>
             </Reveal>
           ))}

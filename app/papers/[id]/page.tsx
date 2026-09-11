@@ -17,11 +17,14 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
   const abstract = decodeAbstract(w.abstract_inverted_index);
   return (
     <div className="max-w-3xl space-y-5">
-      <Link href="/search" className="text-sm text-ink/40 hover:text-ink">
+      <Link
+        href="/search"
+        className="text-sm text-ink/40 hover:text-ink dark:text-paper/40 dark:hover:text-paper"
+      >
         ← Back to search
       </Link>
       <h1 className="font-display text-3xl font-black leading-tight tracking-tight md:text-4xl">{w.title}</h1>
-      <div className="text-sm text-ink/60">
+      <div className="text-sm text-ink/60 dark:text-paper/60">
         {(w.authorships ?? []).slice(0, 8).map((a: any, i: number) => (
           <span key={a.author?.id ?? i}>
             {i > 0 && " · "}
@@ -53,7 +56,7 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
           {w.doi}
         </a>
       )}
-      <p className="leading-relaxed text-ink/80">{abstract || "No abstract available."}</p>
+      <p className="leading-relaxed text-ink/80 dark:text-paper/80">{abstract || "No abstract available."}</p>
       {(w.related_works?.length > 0 || w.referenced_works?.length > 0) && (
         <div className="grid gap-3 md:grid-cols-2">
           {w.related_works?.length > 0 && (

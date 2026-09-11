@@ -24,14 +24,19 @@ export default async function AuthorPage({ params }: { params: { id: string } })
   } catch {}
   return (
     <div className="space-y-4">
-      <Link href="/search" className="text-sm text-zinc-500">
+      <Link
+        href="/search"
+        className="text-sm text-ink/40 hover:text-ink dark:text-paper/40 dark:hover:text-paper"
+      >
         ← Back
       </Link>
-      <h1 className="text-2xl font-bold">{a.display_name}</h1>
-      <div className="text-sm text-zinc-600">{a.last_known_institutions?.[0]?.display_name ?? "—"}</div>
+      <h1 className="font-display text-3xl font-black tracking-tight">{a.display_name}</h1>
+      <div className="text-sm text-ink/60 dark:text-paper/60">
+        {a.last_known_institutions?.[0]?.display_name ?? "—"}
+      </div>
       <div className="flex gap-2 text-xs">
-        <span className="rounded border px-2 py-1">{a.works_count?.toLocaleString()} pubs</span>
-        <span className="rounded border px-2 py-1">{a.cited_by_count?.toLocaleString()} cites</span>
+        <span className="badge">{a.works_count?.toLocaleString()} pubs</span>
+        <span className="badge">{a.cited_by_count?.toLocaleString()} cites</span>
       </div>
       <div>
         <div className="mb-1 text-sm font-semibold">Top topics</div>
@@ -40,7 +45,7 @@ export default async function AuthorPage({ params }: { params: { id: string } })
             <Link
               key={t.id}
               href={`/topics/${encodeURIComponent(shortId(t.id))}`}
-              className="rounded bg-zinc-100 px-2 py-1"
+              className="badge hover:!bg-accent hover:!text-white"
             >
               {t.display_name}
             </Link>
@@ -53,7 +58,7 @@ export default async function AuthorPage({ params }: { params: { id: string } })
           <Link
             key={w.id}
             href={`/papers/${encodeURIComponent(shortId(w.id))}`}
-            className="block rounded border bg-white p-2 text-sm"
+            className="card block !p-3 text-sm"
           >
             {w.title}
           </Link>
