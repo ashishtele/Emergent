@@ -25,11 +25,11 @@ export default function StatsStrip() {
   return (
     <div className="grid grid-cols-3 gap-3">
       {stats.map((s) => (
-        <div key={s.label} className="card text-center">
-          <div className="font-display text-3xl font-black text-accent md:text-4xl">
+        <div key={s.label} className="card min-w-0 overflow-hidden text-center">
+          <div className="whitespace-nowrap font-display text-2xl font-black text-accent md:text-3xl">
             <CountUp to={s.value} prefix={s.prefix ?? ""} suffix={s.suffix} decimals={s.decimals} />
           </div>
-          <div className="mt-1 text-xs text-ink/50">{s.label}</div>
+          <div className="mt-1 truncate text-xs text-ink/50">{s.label}</div>
         </div>
       ))}
     </div>
