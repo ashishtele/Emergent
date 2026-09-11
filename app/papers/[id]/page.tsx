@@ -1,4 +1,6 @@
 import { openAlex, decodeAbstract } from "@/lib/openalex";
+import { getPaperEnrichment } from "@/lib/s2";
+import { getOaLocations } from "@/lib/unpaywall";
 import SaveButton from "@/components/SaveButton";
 import Link from "next/link";
 
@@ -15,6 +17,10 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
     return <p>Research data is temporarily unavailable. Please try again in a moment.</p>;
   }
   const abstract = decodeAbstract(w.abstract_inverted_index);
+  const tldr = w.doi ? await getPaperEnrichment(w.doi, process.env.S2_API_KEY) : null;
+  const oa = w.doi
+    ? await getOaLocations(w.doi, process.env.UNPAYWALL_EMAIL ?? process.env.OPENALEX_MAILTO)
+    : null;
   return (
     <div className="max-w-3xl space-y-5">
       <Link
@@ -56,7 +62,20 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
           {w.doi}
         </a>
       )}
+      {oa?.pdfUrl && (
+        <a href={oa.pdfUrl} className="btn-primary w-fit text-sm">
+          Read free PDF
+        </a>
+      )}
       <p className="leading-relaxed text-ink/80 dark:text-paper/80">{abstract || "No abstract available."}</p>
+      {tldr && (
+        <div className="card !border-accent/30">
+          <div className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            TLDR · Semantic Scholar
+          </div>
+          <p className="text-sm">{tldr.tldr}</p>
+        </div>
+      )}
       {(w.related_works?.length > 0 || w.referenced_works?.length > 0) && (
         <div className="grid gap-3 md:grid-cols-2">
           {w.related_works?.length > 0 && (

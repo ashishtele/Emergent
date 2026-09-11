@@ -1,10 +1,28 @@
 import { openAlex } from "@/lib/openalex";
+import { getTopicSummary } from "@/lib/wiki";
+import { getFreshPreprints } from "@/lib/arxiv";
 import ReadingPath from "@/components/ReadingPath";
 import ActivityBars from "@/components/ActivityBars";
 import Link from "next/link";
 
 function shortId(url: string) {
   return url?.split("/").pop() ?? url;
+}
+
+async function FreshPreprints(topicName: string) {
+  const items = await getFreshPreprints(topicName, 4);
+  if (items.length === 0) return null;
+  return (
+    <div className="space-y-2">
+      <div className="text-sm font-semibold">Fresh on arXiv</div>
+      {items.map((p) => (
+        <a key={p.id} href={p.link} target="_blank" rel="noreferrer" className="card block !p-3 text-sm">
+          <span className="break-words font-medium leading-snug">{p.title}</span>{" "}
+          <span className="text-ink/50 dark:text-paper/50">({p.published})</span>
+        </a>
+      ))}
+    </div>
+  );
 }
 
 export default async function TopicPage({ params }: { params: { id: string } }) {
@@ -38,12 +56,15 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
         ← Home
       </Link>
       <h1 className="font-display text-3xl font-black tracking-tight">{topic.display_name}</h1>
-      <p className="text-sm text-ink/60 dark:text-paper/60">{topic.description}</p>
+      <p className="text-sm text-ink/60 dark:text-paper/60">
+        {topic.description ?? (await getTopicSummary(topic.display_name)) ?? ""}
+      </p>
       <div className="text-xs text-ink/50 dark:text-paper/50">
         {topic.works_count?.toLocaleString()} papers
       </div>
       {activity.length > 0 && <ActivityBars activity={activity} />}
       <ReadingPath topic={topic.display_name} topicId={topicId} />
+      {await FreshPreprints(topic.display_name)}
       <div>
         <div className="mb-1 text-sm font-semibold">Top papers</div>
         {topWorks.map((w: any) => (
