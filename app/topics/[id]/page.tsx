@@ -34,12 +34,14 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
 
   return (
     <div className="space-y-4">
-      <Link href="/" className="text-sm text-zinc-500">
+      <Link href="/" className="text-sm text-ink/40 hover:text-ink dark:text-paper/40 dark:hover:text-paper">
         ← Home
       </Link>
-      <h1 className="text-2xl font-bold">{topic.display_name}</h1>
-      <p className="text-sm text-zinc-600">{topic.description}</p>
-      <div className="text-xs text-zinc-500">{topic.works_count?.toLocaleString()} papers</div>
+      <h1 className="font-display text-3xl font-black tracking-tight">{topic.display_name}</h1>
+      <p className="text-sm text-ink/60 dark:text-paper/60">{topic.description}</p>
+      <div className="text-xs text-ink/50 dark:text-paper/50">
+        {topic.works_count?.toLocaleString()} papers
+      </div>
       {activity.length > 0 && <ActivityBars activity={activity} />}
       <ReadingPath topic={topic.display_name} topicId={topicId} />
       <div>
@@ -48,9 +50,9 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
           <Link
             key={w.id}
             href={`/papers/${encodeURIComponent(shortId(w.id))}`}
-            className="block rounded border bg-white p-2 text-sm"
+            className="card block !p-3 text-sm"
           >
-            {w.title} <span className="text-zinc-500">({w.cited_by_count} cites)</span>
+            {w.title} <span className="text-ink/50 dark:text-paper/50">({w.cited_by_count} cites)</span>
           </Link>
         ))}
       </div>

@@ -33,18 +33,18 @@ export default function ReadingPath({ topic, topicId }: { topic: string; topicId
   };
 
   return (
-    <div className="rounded border bg-white p-3">
+    <div className="card">
       <div className="mb-2 flex items-center justify-between">
         <div className="text-sm font-semibold">📚 AI reading path</div>
         <button
           onClick={generate}
           disabled={busy}
-          className="rounded bg-black px-3 py-1 text-sm text-white disabled:opacity-50"
+          className="btn-primary !px-4 !py-1.5 text-sm disabled:opacity-50"
         >
           {busy ? "…" : "Generate"}
         </button>
       </div>
-      {msg && <p className="mb-2 text-xs text-zinc-500">{msg}</p>}
+      {msg && <p className="mb-2 text-xs text-ink/50 dark:text-paper/50">{msg}</p>}
       {path && (
         <ol className="list-decimal space-y-2 pl-5 text-sm">
           {path.map((s) => (
@@ -55,7 +55,7 @@ export default function ReadingPath({ topic, topicId }: { topic: string; topicId
               >
                 {s.title ?? s.openalexId}
               </Link>
-              <div className="text-xs text-zinc-600">{s.why}</div>
+              <div className="text-xs text-ink/60 dark:text-paper/60">{s.why}</div>
             </li>
           ))}
         </ol>

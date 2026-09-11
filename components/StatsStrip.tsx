@@ -29,7 +29,7 @@ export default function StatsStrip() {
           <div className="whitespace-nowrap font-display text-2xl font-black text-accent md:text-3xl">
             <CountUp to={s.value} prefix={s.prefix ?? ""} suffix={s.suffix} decimals={s.decimals} />
           </div>
-          <div className="mt-1 truncate text-xs text-ink/50">{s.label}</div>
+          <div className="mt-1 truncate text-xs text-ink/50 dark:text-paper/50">{s.label}</div>
         </div>
       ))}
     </div>
