@@ -1,6 +1,7 @@
 import { openAlex, decodeAbstract } from "@/lib/openalex";
 import { getPaperEnrichment } from "@/lib/s2";
 import { getOaLocations } from "@/lib/unpaywall";
+import { findCodeRepos } from "@/lib/github";
 import SaveButton from "@/components/SaveButton";
 import BriefButton from "@/components/BriefButton";
 import Link from "next/link";
@@ -26,6 +27,11 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
         getOaLocations(w.doi, process.env.UNPAYWALL_EMAIL ?? process.env.OPENALEX_MAILTO),
       ])
     : [null, null];
+  const arxivHit = JSON.stringify(w.locations ?? []).match(/arxiv\.org\/(?:abs|pdf)\/([\d.]+)/i);
+  const code = await findCodeRepos(
+    { arxiv: arxivHit ? arxivHit[1] : null, doi: w.doi, title: w.title },
+    process.env.GITHUB_TOKEN,
+  );
   return (
     <div className="max-w-3xl space-y-5">
       <Link
@@ -115,6 +121,23 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
       )}
       <SaveButton id={shortId(w.id)} title={w.title} />
       <BriefButton openalexId={shortId(w.id)} />
+      {code.length > 0 && (
+        <div className="card">
+          <div className="mb-2 text-sm font-semibold">💻 Community code</div>
+          <div className="space-y-2">
+            {code.map((r) => (
+              <a key={r.url} href={r.url} target="_blank" rel="noreferrer" className="block text-sm">
+                <span className="font-medium hover:underline">{r.name}</span>{" "}
+                <span className="text-xs text-ink/50 dark:text-paper/50">★ {r.stars.toLocaleString()}</span>
+                {r.description && (
+                  <div className="text-xs text-ink/60 dark:text-paper/60">{r.description}</div>
+                )}
+              </a>
+            ))}
+          </div>
+          <p className="mt-2 text-[11px] text-ink/40 dark:text-paper/40">GitHub search, may be approximate</p>
+        </div>
+      )}
     </div>
   );
 }
