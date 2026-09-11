@@ -1,6 +1,8 @@
 import { openAlex } from "@/lib/openalex";
 import { getTopicSummary } from "@/lib/wiki";
 import { getFreshPreprints } from "@/lib/arxiv";
+import { getJournals } from "@/lib/doaj";
+import { topicKeywords } from "@/lib/arxiv";
 import ReadingPath from "@/components/ReadingPath";
 import ActivityBars from "@/components/ActivityBars";
 import Link from "next/link";
@@ -19,6 +21,28 @@ async function FreshPreprints(topicName: string) {
         <a key={p.id} href={p.link} target="_blank" rel="noreferrer" className="card block !p-3 text-sm">
           <span className="break-words font-medium leading-snug">{p.title}</span>{" "}
           <span className="text-ink/50 dark:text-paper/50">({p.published})</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+async function OpenJournals(topicName: string) {
+  const items = await getJournals(topicKeywords(topicName), 4);
+  if (items.length === 0) return null;
+  return (
+    <div className="space-y-2">
+      <div className="text-sm font-semibold">Leading open journals</div>
+      {items.map((j) => (
+        <a
+          key={j.title}
+          href={j.link ?? undefined}
+          target="_blank"
+          rel="noreferrer"
+          className="card block !p-3 text-sm"
+        >
+          <span className="break-words font-medium leading-snug">{j.title}</span>{" "}
+          <span className="text-ink/50 dark:text-paper/50">({j.publisher})</span>
         </a>
       ))}
     </div>
@@ -65,6 +89,7 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
       {activity.length > 0 && <ActivityBars activity={activity} />}
       <ReadingPath topic={topic.display_name} topicId={topicId} />
       {await FreshPreprints(topic.display_name)}
+      {await OpenJournals(topic.display_name)}
       <div>
         <div className="mb-1 text-sm font-semibold">Top papers</div>
         {topWorks.map((w: any) => (
