@@ -2,6 +2,7 @@ import { openAlex, decodeAbstract } from "@/lib/openalex";
 import { getPaperEnrichment } from "@/lib/s2";
 import { getOaLocations } from "@/lib/unpaywall";
 import SaveButton from "@/components/SaveButton";
+import BriefButton from "@/components/BriefButton";
 import Link from "next/link";
 
 export const revalidate = 3600;
@@ -113,6 +114,7 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
         </div>
       )}
       <SaveButton id={shortId(w.id)} title={w.title} />
+      <BriefButton openalexId={shortId(w.id)} />
     </div>
   );
 }
