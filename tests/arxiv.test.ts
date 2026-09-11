@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { getFreshPreprints } from "../lib/arxiv";
+import { getFreshPreprints, topicKeywords } from "../lib/arxiv";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -27,5 +27,25 @@ describe("getFreshPreprints (arXiv)", () => {
       vi.fn(async () => ({ ok: false, status: 500 })),
     );
     expect(await getFreshPreprints("quantum")).toEqual([]);
+  });
+});
+
+describe("topicKeywords", () => {
+  it("drops stopwords and keeps the distinctive core", () => {
+    expect(topicKeywords("AI in Healthcare and Education")).toBe("healthcare education");
+    expect(topicKeywords("Machine learning")).toBe("machine learning");
+  });
+  it("falls back to a shorter query when the full one is empty", async () => {
+    const empty = { ok: true, text: async () => "<feed></feed>" };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => empty),
+    );
+    expect(await getFreshPreprints("Artificial Intelligence in Healthcare and Education")).toEqual([]);
+    const calls = vi.mocked(fetch).mock.calls.map((c) => String(c[0]));
+    expect(calls.length).toBe(2);
+    expect(calls[0]).toContain("artificial+intelligence+healthcare");
+    expect(calls[1]).toContain("artificial+intelligence");
+    expect(calls[1]).not.toContain("healthcare");
   });
 });
