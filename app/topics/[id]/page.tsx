@@ -6,12 +6,15 @@ import { topicKeywords } from "@/lib/arxiv";
 import ReadingPath from "@/components/ReadingPath";
 import ActivityBars from "@/components/ActivityBars";
 import Link from "next/link";
+import { Suspense } from "react";
+
+export const revalidate = 3600;
 
 function shortId(url: string) {
   return url?.split("/").pop() ?? url;
 }
 
-async function FreshPreprints(topicName: string) {
+async function FreshPreprints({ topicName }: { topicName: string }) {
   const items = await getFreshPreprints(topicName, 4);
   if (items.length === 0) return null;
   return (
@@ -27,7 +30,7 @@ async function FreshPreprints(topicName: string) {
   );
 }
 
-async function OpenJournals(topicName: string) {
+async function OpenJournals({ topicName }: { topicName: string }) {
   const items = await getJournals(topicKeywords(topicName), 4);
   if (items.length === 0) return null;
   return (
@@ -58,21 +61,38 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
     return <p>Research data is temporarily unavailable. Please try again in a moment.</p>;
   }
   const topicId = topic.id?.split("/").pop() ?? id;
-  let topWorks: any[] = [];
-  let activity: any[] = [];
-  try {
-    const [tw, act] = await Promise.all([
-      openAlex("/works", { filter: `topics.id:${topicId}`, sort: "cited_by_count:desc", "per-page": "5" }),
-      openAlex("/works", { filter: `topics.id:${topicId}`, group_by: "publication_year", "per-page": "50" }),
-    ]);
-    topWorks = tw.results ?? [];
-    activity = (act.group_by ?? [])
-      .map((g: any) => ({ year: g.key, count: g.count }))
-      .sort((a: any, b: any) => a.year - b.year)
-      .slice(-8);
-  } catch {
-    /* non-fatal */
-  }
+  const name: string = topic.display_name;
+  // Core (OpenAlex + description) resolves before first paint;
+  // slow enrichments stream in via Suspense below.
+  const [core, wiki] = await Promise.all([
+    (async () => {
+      try {
+        const [tw, act] = await Promise.all([
+          openAlex("/works", {
+            filter: `topics.id:${topicId}`,
+            sort: "cited_by_count:desc",
+            "per-page": "5",
+          }),
+          openAlex("/works", {
+            filter: `topics.id:${topicId}`,
+            group_by: "publication_year",
+            "per-page": "50",
+          }),
+        ]);
+        return {
+          topWorks: tw.results ?? [],
+          activity: (act.group_by ?? [])
+            .map((g: any) => ({ year: g.key, count: g.count }))
+            .sort((a: any, b: any) => a.year - b.year)
+            .slice(-8),
+        };
+      } catch {
+        return { topWorks: [], activity: [] };
+      }
+    })(),
+    topic.description ?? getTopicSummary(name),
+  ]);
+  const { topWorks, activity } = core;
 
   return (
     <div className="space-y-4">
@@ -80,16 +100,18 @@ export default async function TopicPage({ params }: { params: { id: string } }) 
         ← Home
       </Link>
       <h1 className="font-display text-3xl font-black tracking-tight">{topic.display_name}</h1>
-      <p className="text-sm text-ink/60 dark:text-paper/60">
-        {topic.description ?? (await getTopicSummary(topic.display_name)) ?? ""}
-      </p>
+      <p className="text-sm text-ink/60 dark:text-paper/60">{wiki ?? ""}</p>
       <div className="text-xs text-ink/50 dark:text-paper/50">
         {topic.works_count?.toLocaleString()} papers
       </div>
       {activity.length > 0 && <ActivityBars activity={activity} />}
       <ReadingPath topic={topic.display_name} topicId={topicId} />
-      {await FreshPreprints(topic.display_name)}
-      {await OpenJournals(topic.display_name)}
+      <Suspense fallback={<p className="text-sm text-ink/40 dark:text-paper/40">Loading fresh preprints…</p>}>
+        <FreshPreprints topicName={name} />
+      </Suspense>
+      <Suspense fallback={<p className="text-sm text-ink/40 dark:text-paper/40">Loading open journals…</p>}>
+        <OpenJournals topicName={name} />
+      </Suspense>
       <div>
         <div className="mb-1 text-sm font-semibold">Top papers</div>
         {topWorks.map((w: any) => (

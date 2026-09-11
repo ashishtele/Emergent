@@ -4,6 +4,8 @@ import { getOaLocations } from "@/lib/unpaywall";
 import SaveButton from "@/components/SaveButton";
 import Link from "next/link";
 
+export const revalidate = 3600;
+
 function shortId(url: string) {
   return url?.split("/").pop() ?? url;
 }
@@ -17,10 +19,12 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
     return <p>Research data is temporarily unavailable. Please try again in a moment.</p>;
   }
   const abstract = decodeAbstract(w.abstract_inverted_index);
-  const tldr = w.doi ? await getPaperEnrichment(w.doi, process.env.S2_API_KEY) : null;
-  const oa = w.doi
-    ? await getOaLocations(w.doi, process.env.UNPAYWALL_EMAIL ?? process.env.OPENALEX_MAILTO)
-    : null;
+  const [tldr, oa] = w.doi
+    ? await Promise.all([
+        getPaperEnrichment(w.doi, process.env.S2_API_KEY),
+        getOaLocations(w.doi, process.env.UNPAYWALL_EMAIL ?? process.env.OPENALEX_MAILTO),
+      ])
+    : [null, null];
   return (
     <div className="max-w-3xl space-y-5">
       <Link

@@ -57,7 +57,7 @@ async function queryArxiv(q: string, max: number): Promise<Preprint[]> {
   });
   const res = await fetch(`https://export.arxiv.org/api/query?${params.toString()}`, {
     headers: { "User-Agent": "Emergent/0.1 (research discovery)" },
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(8000),
     next: { revalidate: 3600 },
   });
   if (!res.ok) return [];

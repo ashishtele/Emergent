@@ -38,4 +38,21 @@ describe("getJournals (DOAJ)", () => {
     );
     expect(await getJournals("ml")).toEqual([]);
   });
+  it("falls back to a shorter query when the full one is empty", async () => {
+    const full = { ok: true, json: async () => ({ results: [] }) };
+    const short = {
+      ok: true,
+      json: async () => ({
+        results: [{ bibjson: { title: "Mil J", publisher: { name: "P" }, ref: { journal: "https://m.j" } } }],
+      }),
+    };
+    const mock = vi.fn();
+    mock.mockResolvedValueOnce(full).mockResolvedValueOnce(short);
+    vi.stubGlobal("fetch", mock);
+    const out = await getJournals("military technology strategies");
+    expect(out).toEqual([{ title: "Mil J", publisher: "P", link: "https://m.j" }]);
+    const calls = mock.mock.calls.map((c) => String(c[0]));
+    expect(calls).toHaveLength(2);
+    expect(calls[1]).toContain("military%20technology");
+  });
 });
