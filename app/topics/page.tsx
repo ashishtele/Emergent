@@ -14,26 +14,21 @@ export default async function TopicsPage() {
     return <p>Research data is temporarily unavailable. Please try again in a moment.</p>;
   }
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Topic Explorer</h1>
-      <form action="/search" className="flex gap-2">
+    <div className="space-y-6">
+      <div>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-accent">Browse</p>
+        <h1 className="font-display text-4xl font-black tracking-tight">Topic Explorer</h1>
+      </div>
+      <form action="/search" className="flex max-w-xl gap-2">
         <input type="hidden" name="type" value="topics" />
-        <input
-          name="q"
-          placeholder="Search topics… Try: machine learning"
-          className="w-full rounded border px-3 py-2"
-        />
-        <button className="rounded bg-black px-4 py-2 text-white">Search</button>
+        <input name="q" placeholder="Search topics… Try: machine learning" className="field" />
+        <button className="btn-primary shrink-0">Search</button>
       </form>
-      <div className="grid gap-2 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2">
         {topics.map((t: any) => (
-          <Link
-            key={t.id}
-            href={`/topics/${encodeURIComponent(shortId(t.id))}`}
-            className="rounded border bg-white p-3 hover:border-black"
-          >
-            <div className="font-medium">{t.display_name}</div>
-            <div className="text-xs text-zinc-500">
+          <Link key={t.id} href={`/topics/${encodeURIComponent(shortId(t.id))}`} className="card">
+            <div className="font-display text-lg font-bold">{t.display_name}</div>
+            <div className="mt-1 text-xs text-ink/50">
               {t.works_count?.toLocaleString()} papers · {t.field?.display_name ?? ""}
             </div>
           </Link>

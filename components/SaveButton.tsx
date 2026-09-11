@@ -15,10 +15,10 @@ export default function SaveButton({ id, title }: { id: string; title: string })
   };
   return (
     <div className="flex items-center gap-2">
-      <button onClick={save} className="rounded bg-black px-4 py-2 text-sm text-white">
+      <button onClick={save} className="btn-primary !px-5 !py-2 text-sm">
         Save Paper
       </button>
-      {msg && <span className="text-xs text-zinc-600">{msg}</span>}
+      {msg && <span className="text-xs text-ink/60">{msg}</span>}
     </div>
   );
 }
