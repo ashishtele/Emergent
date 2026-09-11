@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Trending() {
   const [data, setData] = useState<any>(null);
@@ -9,18 +10,18 @@ export default function Trending() {
       .then(setData)
       .catch(() => {});
   }, []);
-  if (!data) return <p className="text-sm text-zinc-500">Loading trends…</p>;
+  if (!data) return <p className="text-sm text-ink/40">Loading trends…</p>;
   return (
     <div className="flex flex-wrap gap-2 text-sm">
       {(data.trending ?? []).map((t: any) => (
-        <a
+        <Link
           key={t.term}
           href={`/search?q=${encodeURIComponent(t.term)}`}
-          className="rounded-full bg-black px-3 py-1 text-white"
-          title={`${t.prev} → ${t.cur} papers`}
+          className="chip-hot"
+          title={`${t.prev?.toLocaleString()} → ${t.cur?.toLocaleString()} papers`}
         >
-          {t.term} +{t.growth_pct}%
-        </a>
+          {t.term} <span className="opacity-70">+{t.growth_pct}%</span>
+        </Link>
       ))}
     </div>
   );

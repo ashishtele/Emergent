@@ -16,12 +16,12 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
   }
   const abstract = decodeAbstract(w.abstract_inverted_index);
   return (
-    <div className="space-y-4">
-      <Link href="/search" className="text-sm text-zinc-500">
+    <div className="max-w-3xl space-y-5">
+      <Link href="/search" className="text-sm text-ink/40 hover:text-ink">
         ← Back to search
       </Link>
-      <h1 className="text-2xl font-bold">{w.title}</h1>
-      <div className="text-sm text-zinc-600">
+      <h1 className="font-display text-3xl font-black leading-tight tracking-tight md:text-4xl">{w.title}</h1>
+      <div className="text-sm text-ink/60">
         {(w.authorships ?? []).slice(0, 8).map((a: any, i: number) => (
           <span key={a.author?.id ?? i}>
             {i > 0 && " · "}
@@ -34,36 +34,36 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
           </span>
         ))}
       </div>
-      <div className="flex flex-wrap gap-2 text-xs">
-        <span className="rounded border px-2 py-1">{w.publication_date}</span>
-        <span className="rounded border px-2 py-1">Cited by {w.cited_by_count}</span>
-        {w.open_access?.is_oa && <span className="rounded border px-2 py-1">Open access</span>}
+      <div className="flex flex-wrap gap-2">
+        <span className="badge">{w.publication_date}</span>
+        <span className="badge">Cited by {w.cited_by_count?.toLocaleString()}</span>
+        {w.open_access?.is_oa && <span className="badge !bg-moss !text-paper">Open access</span>}
         {(w.topics ?? []).slice(0, 4).map((t: any) => (
           <Link
             key={t.id}
             href={`/topics/${encodeURIComponent(shortId(t.id))}`}
-            className="rounded bg-zinc-100 px-2 py-1"
+            className="badge !bg-accent/10 !text-accent hover:!bg-accent hover:!text-white"
           >
             {t.display_name}
           </Link>
         ))}
       </div>
       {w.doi && (
-        <a href={w.doi} className="text-sm text-blue-600">
+        <a href={w.doi} className="text-sm text-accent hover:underline">
           {w.doi}
         </a>
       )}
-      <p className="text-sm leading-relaxed">{abstract || "No abstract available."}</p>
+      <p className="leading-relaxed text-ink/80">{abstract || "No abstract available."}</p>
       {(w.related_works?.length > 0 || w.referenced_works?.length > 0) && (
         <div className="grid gap-3 md:grid-cols-2">
           {w.related_works?.length > 0 && (
-            <div className="rounded border bg-white p-3">
+            <div className="card">
               <div className="mb-1 text-sm font-semibold">Related papers</div>
               {w.related_works.slice(0, 5).map((u: string) => (
                 <Link
                   key={u}
                   href={`/papers/${encodeURIComponent(shortId(u))}`}
-                  className="block py-0.5 text-xs text-blue-600 hover:underline"
+                  className="block py-0.5 text-xs text-accent hover:underline"
                 >
                   {shortId(u)}
                 </Link>
@@ -71,13 +71,13 @@ export default async function PaperPage({ params }: { params: { id: string } }) 
             </div>
           )}
           {w.referenced_works?.length > 0 && (
-            <div className="rounded border bg-white p-3">
+            <div className="card">
               <div className="mb-1 text-sm font-semibold">References</div>
               {w.referenced_works.slice(0, 5).map((u: string) => (
                 <Link
                   key={u}
                   href={`/papers/${encodeURIComponent(shortId(u))}`}
-                  className="block py-0.5 text-xs text-blue-600 hover:underline"
+                  className="block py-0.5 text-xs text-accent hover:underline"
                 >
                   {shortId(u)}
                 </Link>

@@ -48,7 +48,7 @@ export default function LoginPage() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
-        className="w-full rounded border px-3 py-2"
+        className="field !rounded-xl"
       />
       {mode !== "otp" && (
         <input
@@ -56,10 +56,10 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password (min 6 chars)"
-          className="w-full rounded border px-3 py-2"
+          className="field !rounded-xl"
         />
       )}
-      <button onClick={run} className="rounded bg-black px-4 py-2 text-white">
+      <button onClick={run} className="btn-primary">
         {mode === "otp" ? "Send magic link" : mode === "signup" ? "Create account" : "Sign in"}
       </button>
       {msg && <p className="text-sm">{msg}</p>}
