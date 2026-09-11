@@ -29,7 +29,7 @@ function SearchBox({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search papers, researchers, topics…"
-        className="field"
+        className="field min-w-0 flex-1"
       />
       <button className="btn-primary shrink-0">Search</button>
     </form>
@@ -113,10 +113,15 @@ function Results() {
                     ? `/institutions/${id}`
                     : `/topics/${id}`;
             return (
-              <Link key={r.id} href={href} className="card !p-3">
-                <div className="font-medium">{r.title ?? r.display_name}</div>
-                <div className="mt-1 text-xs text-ink/50">
-                  Cited by {r.cited_by_count ?? r.works_count ?? "—"}
+              <Link key={r.id} href={href} className="card !p-4">
+                <div className="break-words font-medium leading-snug">{r.title ?? r.display_name}</div>
+                <div className="mt-1.5 flex items-center gap-2 text-xs text-ink/50">
+                  <span className="badge">
+                    {type === "works"
+                      ? `Cited by ${(r.cited_by_count ?? 0).toLocaleString()}`
+                      : `${(r.works_count ?? 0).toLocaleString()} works`}
+                  </span>
+                  <span className="capitalize">{type.slice(0, -1)}</span>
                 </div>
               </Link>
             );
