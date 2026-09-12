@@ -46,7 +46,10 @@ export default function Home() {
             <button className="btn-primary shrink-0">Search</button>
           </form>
           <p className="mt-4 text-[11px] uppercase tracking-widest text-ink/40 dark:text-paper/40">
-            <Link href="/institutions" className="underline underline-offset-4 hover:text-accent">
+            <Link
+              href="/institutions"
+              className="pointer-events-auto underline underline-offset-4 hover:text-accent"
+            >
               See where research lives →
             </Link>
           </p>
