@@ -1,8 +1,11 @@
+import dynamic from "next/dynamic";
 import Trending from "@/components/Trending";
 import StatsStrip from "@/components/StatsStrip";
 import TermsMarquee from "@/components/TermsMarquee";
 import Reveal from "@/components/Reveal";
 import Link from "next/link";
+
+const HeroGalaxy = dynamic(() => import("@/components/HeroGalaxy"), { ssr: false });
 
 const FEATURES = [
   {
@@ -26,20 +29,28 @@ export default function Home() {
   const explore = ["AI", "Robotics", "Medicine", "Physics", "Databases"];
   return (
     <div className="space-y-14">
-      <section className="pt-6 text-center">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-accent">
-          The research compass
-        </p>
-        <h1 className="mx-auto max-w-3xl font-display text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
-          Explore the world&apos;s research.
-        </h1>
-        <p className="mx-auto mt-5 max-w-xl text-ink/60 md:text-lg dark:text-paper/60">
-          Millions of papers, distilled into trends, people and reading paths. Start with a question.
-        </p>
-        <form action="/search" className="mx-auto mt-8 flex max-w-xl gap-2">
-          <input name="q" placeholder="Try: AI agents, CRISPR, quantum…" className="field min-w-0 flex-1" />
-          <button className="btn-primary shrink-0">Search</button>
-        </form>
+      <section className="relative overflow-hidden rounded-3xl border border-ink/10 px-4 pb-10 pt-10 dark:border-white/10 md:pt-14">
+        <HeroGalaxy />
+        <div className="relative z-10 pointer-events-none text-center">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+            The research compass
+          </p>
+          <h1 className="mx-auto max-w-3xl font-display text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
+            Explore the world&apos;s research.
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-ink/60 md:text-lg dark:text-paper/60">
+            Millions of papers, distilled into trends, people and reading paths. Start with a question.
+          </p>
+          <form action="/search" className="pointer-events-auto mx-auto mt-8 flex max-w-xl gap-2">
+            <input name="q" placeholder="Try: AI agents, CRISPR, quantum…" className="field min-w-0 flex-1" />
+            <button className="btn-primary shrink-0">Search</button>
+          </form>
+          <p className="mt-4 text-[11px] uppercase tracking-widest text-ink/40 dark:text-paper/40">
+            <Link href="/institutions" className="underline underline-offset-4 hover:text-accent">
+              See where research lives →
+            </Link>
+          </p>
+        </div>
       </section>
 
       <Reveal>
