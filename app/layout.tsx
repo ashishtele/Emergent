@@ -39,6 +39,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   Topics
                 </Link>
                 <Link
+                  href="/institutions"
+                  className="rounded-full px-3 py-1.5 hover:bg-ink/5 dark:hover:bg-white/10"
+                >
+                  Globe
+                </Link>
+                <Link
                   href="/library"
                   className="rounded-full bg-ink px-4 py-1.5 text-paper hover:bg-accent dark:bg-paper dark:text-ink dark:hover:bg-accent dark:hover:text-white"
                 >
