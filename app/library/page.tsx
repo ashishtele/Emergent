@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { supabaseServer, isSupabaseConfigured } from "@/lib/supabase-server";
 import { db } from "@/lib/db";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "My Library",
+  description: "Your saved papers and AI-guided reading paths.",
+};
 
 export default async function LibraryPage() {
   if (!isSupabaseConfigured()) {
