@@ -4,13 +4,30 @@ import { Fraunces, Inter } from "next/font/google";
 import Link from "next/link";
 import Providers from "./providers";
 import ThemeToggle from "@/components/ThemeToggle";
+import { siteUrl } from "@/lib/site";
 
 const display = Fraunces({ subsets: ["latin"], variable: "--font-display" });
 const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Emergent — Explore the world's research",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "Emergent — Explore the world's research",
+    template: "%s | Emergent",
+  },
   description: "Discover papers, researchers, institutions and trends via OpenAlex.",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "Emergent",
+    title: "Emergent — Explore the world's research",
+    description: "Millions of papers, distilled into trends, people and reading paths.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Emergent — Explore the world's research",
+    description: "Millions of papers, distilled into trends, people and reading paths.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -63,6 +80,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Emergent<span className="text-accent">.</span>
               </span>
               <span>Research data via OpenAlex. Reading paths via open models.</span>
+              <span className="flex items-center gap-3">
+                <Link href="/privacy" className="hover:underline">
+                  Privacy
+                </Link>
+                <a
+                  href="https://github.com/ashishtele/Emergent"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:underline"
+                >
+                  GitHub
+                </a>
+              </span>
             </div>
           </footer>
         </Providers>

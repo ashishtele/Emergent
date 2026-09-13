@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { openAlex } from "@/lib/openalex";
 import { getTopicSummary } from "@/lib/wiki";
 import { getFreshPreprints } from "@/lib/arxiv";
@@ -9,6 +10,18 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 export const revalidate = 3600;
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  try {
+    const t: any = await openAlex(`/topics/${encodeURIComponent(decodeURIComponent(params.id))}`);
+    return {
+      title: t.display_name,
+      description: `Explore ${t.works_count?.toLocaleString() ?? ""} papers on ${t.display_name} — top works, trends and reading paths.`,
+    };
+  } catch {
+    return { title: "Topic" };
+  }
+}
 
 function shortId(url: string) {
   return url?.split("/").pop() ?? url;

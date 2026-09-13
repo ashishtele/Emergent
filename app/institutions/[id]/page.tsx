@@ -1,5 +1,18 @@
+import type { Metadata } from "next";
 import { openAlex } from "@/lib/openalex";
 import Link from "next/link";
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  try {
+    const inst: any = await openAlex(`/institutions/${encodeURIComponent(decodeURIComponent(params.id))}`);
+    return {
+      title: inst.display_name,
+      description: `${inst.display_name} — ${inst.works_count?.toLocaleString() ?? 0} works, top papers and research areas.`,
+    };
+  } catch {
+    return { title: "Institution" };
+  }
+}
 function shortId(u: string) {
   return u?.split("/").pop() ?? u;
 }

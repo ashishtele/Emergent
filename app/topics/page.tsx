@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { openAlex } from "@/lib/openalex";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Topic Explorer",
+  description: "Browse research topics and find what's heating up, with paper counts and trends.",
+};
 
 function shortId(u: string) {
   return u?.split("/").pop() ?? u;

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { openAlex, decodeAbstract } from "@/lib/openalex";
 import { getPaperEnrichment } from "@/lib/s2";
 import { getOaLocations } from "@/lib/unpaywall";
@@ -7,6 +8,24 @@ import BriefButton from "@/components/BriefButton";
 import Link from "next/link";
 
 export const revalidate = 3600;
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  try {
+    const w: any = await openAlex(`/works/${encodeURIComponent(decodeURIComponent(params.id))}`);
+    const authors = (w.authorships ?? [])
+      .slice(0, 3)
+      .map((a: any) => a.author?.display_name)
+      .filter(Boolean)
+      .join(", ");
+    return {
+      title: w.title?.length > 140 ? `${w.title.slice(0, 140)}…` : (w.title ?? "Paper"),
+      description:
+        `${authors ? `By ${authors}. ` : ""}Cited by ${w.cited_by_count?.toLocaleString() ?? 0} · ${w.publication_date ?? ""}`.trim(),
+    };
+  } catch {
+    return { title: "Paper" };
+  }
+}
 
 function shortId(url: string) {
   return url?.split("/").pop() ?? url;
