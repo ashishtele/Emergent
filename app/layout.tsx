@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="font-display text-xl font-black tracking-tight">
                 Emergent<span className="text-accent">.</span>
               </Link>
-              <nav className="flex items-center gap-1 text-sm">
+              <nav className="flex flex-wrap items-center justify-end gap-1 text-sm">
                 <Link
                   href="/search"
                   className="rounded-full px-3 py-1.5 hover:bg-ink/5 dark:hover:bg-white/10"
@@ -60,6 +60,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   className="rounded-full px-3 py-1.5 hover:bg-ink/5 dark:hover:bg-white/10"
                 >
                   Globe
+                </Link>
+                <Link
+                  href="/phuse"
+                  className="rounded-full px-3 py-1.5 hover:bg-ink/5 dark:hover:bg-white/10"
+                >
+                  PHUSE
                 </Link>
                 <Link
                   href="/library"
