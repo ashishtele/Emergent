@@ -16,6 +16,12 @@ export const readingPathSchema = z.object({
   topicId: z.string().min(1).max(20).optional(),
 });
 
-export const briefSchema = z.object({
-  openalexId: z.string().min(1).max(20),
-});
+export const briefSchema = z.union([
+  z.object({
+    openalexId: z.string().min(1).max(20),
+  }),
+  z.object({
+    pdfUrl: z.string().url().max(500),
+    title: z.string().min(1).max(300),
+  }),
+]);

@@ -1,7 +1,15 @@
 "use client";
 import { useState } from "react";
 
-export default function BriefButton({ openalexId }: { openalexId: string }) {
+export default function BriefButton({
+  openalexId,
+  pdfUrl,
+  title,
+}: {
+  openalexId?: string;
+  pdfUrl?: string;
+  title?: string;
+}) {
   const [brief, setBrief] = useState<string | null>(null);
   const [meta, setMeta] = useState("");
   const [busy, setBusy] = useState(false);
@@ -12,7 +20,7 @@ export default function BriefButton({ openalexId }: { openalexId: string }) {
     const res = await fetch("/api/ai/brief", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ openalexId }),
+      body: JSON.stringify(openalexId ? { openalexId } : { pdfUrl, title }),
     });
     const j = await res.json().catch(() => ({}));
     setBusy(false);
