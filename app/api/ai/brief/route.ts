@@ -17,8 +17,8 @@ function sourceUrl(w: any, oa: { pdfUrl: string | null; landingUrl: string | nul
 export async function POST(req: NextRequest) {
   if (!isAiConfigured()) return apiError("AI is not configured. Add AI_API_KEY.", 501);
   const parsed = briefSchema.safeParse(await req.json().catch(() => ({})));
-  if (!parsed.success) return badRequest("Invalid {openalexId}");
-  const { openalexId } = parsed.data;
+  if (!parsed.success) return badRequest("Invalid {openalexId} or {pdfUrl, title}");
+  const data = parsed.data;
 
   if (isSupabaseConfigured()) {
     const {
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { client, model } = aiClient();
-  const workKey = `https://openalex.org/${openalexId}`;
+  const workKey = "openalexId" in data ? `https://openalex.org/${data.openalexId}` : data.pdfUrl;
   const key = briefCacheKey(workKey, model);
   try {
     const hit = await db.aiCache.findUnique({ where: { key } });
@@ -48,14 +48,23 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const w: any = await openAlex(`/works/${encodeURIComponent(openalexId)}`);
-    const title = w.title ?? openalexId;
-    const oa = w.doi
-      ? await getOaLocations(w.doi, process.env.UNPAYWALL_EMAIL ?? process.env.OPENALEX_MAILTO)
-      : null;
-    const url = sourceUrl(w, oa);
-    const fullText = url ? await fetchFullText(url, process.env.JINA_API_KEY) : null;
-    const input = fullText ?? decodeAbstract(w.abstract_inverted_index);
+    let title: string;
+    let input: string | null;
+    let fullText: string | null;
+    if ("openalexId" in data) {
+      const w: any = await openAlex(`/works/${encodeURIComponent(data.openalexId)}`);
+      title = w.title ?? data.openalexId;
+      const oa = w.doi
+        ? await getOaLocations(w.doi, process.env.UNPAYWALL_EMAIL ?? process.env.OPENALEX_MAILTO)
+        : null;
+      const url = sourceUrl(w, oa);
+      fullText = url ? await fetchFullText(url, process.env.JINA_API_KEY) : null;
+      input = fullText ?? decodeAbstract(w.abstract_inverted_index);
+    } else {
+      title = data.title;
+      fullText = await fetchFullText(data.pdfUrl, process.env.JINA_API_KEY);
+      input = fullText;
+    }
     if (!input) return apiError("No readable text for this paper", 404);
 
     const brief = await chatWithRetry(() =>

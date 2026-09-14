@@ -9,6 +9,7 @@ import {
   PHUSE_REGIONS,
   type PhuseFilters,
 } from "@/lib/phuse";
+import BriefButton from "@/components/BriefButton";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -46,6 +47,29 @@ function qs(f: PhuseFilters, extra?: Record<string, string>) {
   return s ? `/phuse?${s}` : "/phuse";
 }
 
+function Bar({ label, count, max }: { label: string; count: number; max: number }) {
+  return (
+    <div className="space-y-0.5">
+      <div className="flex items-baseline justify-between gap-2 text-xs">
+        <span className="truncate">{label}</span>
+        <span className="shrink-0 tabular-nums text-ink/50 dark:text-paper/50">{count}</span>
+      </div>
+      <div className="h-1.5 rounded-full bg-ink/10 dark:bg-white/10">
+        <div
+          className="h-full rounded-full bg-accent"
+          style={{ width: `${Math.max(4, (count / max) * 100)}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function topEntries(m: Map<string, number>, n: number) {
+  return Array.from(m.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, n);
+}
+
 const INPUT = "field !py-2 text-sm";
 const LABEL = "mb-1 block font-semibold uppercase tracking-widest text-ink/50 dark:text-paper/50";
 
@@ -57,11 +81,39 @@ export default async function PhusePage({ searchParams }: { searchParams?: SP })
   let records: Awaited<ReturnType<typeof fetchArchive>>["records"] = [];
   let total = 0;
   let pageCount = 0;
+  let landscape: {
+    companies: [string, number][];
+    categories: [string, number][];
+    regions: [string, number][];
+    span: string;
+  } | null = null;
   try {
-    const r = await fetchArchive(f, page, 10);
+    const [r, wide] = await Promise.all([fetchArchive(f, page, 10), fetchArchive(f, 1, 100)]);
     records = r.records;
     total = r.total;
     pageCount = r.pageCount;
+    const comp = new Map<string, number>();
+    const cat = new Map<string, number>();
+    const reg = new Map<string, number>();
+    let minY = Infinity;
+    let maxY = -Infinity;
+    for (const w of wide.records) {
+      if (w.company) comp.set(w.company, (comp.get(w.company) ?? 0) + 1);
+      if (w.category) cat.set(w.category, (cat.get(w.category) ?? 0) + 1);
+      if (w.region) reg.set(w.region, (reg.get(w.region) ?? 0) + 1);
+      const y = Number(w.year);
+      if (Number.isFinite(y)) {
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+    }
+    landscape = {
+      companies: topEntries(comp, 8),
+      categories: topEntries(cat, 6),
+      regions: topEntries(reg, 4),
+      span:
+        minY <= maxY ? `${minY}–${maxY} · top ${wide.records.length} of ${wide.total.toLocaleString()}` : "",
+    };
   } catch {
     return <p>PHUSE archive is temporarily unavailable. Please try again in a moment.</p>;
   }
@@ -201,12 +253,42 @@ export default async function PhusePage({ searchParams }: { searchParams?: SP })
               >
                 Open PDF in new tab ↗
               </a>
+              <BriefButton pdfUrl={selectedUrl} title={selected.title} />
             </div>
           ) : (
             <p className="text-sm text-ink/60 dark:text-paper/60">
               No paper file attached to this record — it may be slides-only.
             </p>
           )}
+        </section>
+      )}
+
+      {landscape && landscape.companies.length > 0 && (
+        <section>
+          <h2 className="section-title mb-1">Industry landscape</h2>
+          <p className="mb-3 text-xs text-ink/50 dark:text-paper/50">
+            Who publishes here, in what — {landscape.span || "current filters"}
+          </p>
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="card space-y-2">
+              <div className="text-sm font-semibold">Top companies</div>
+              {landscape.companies.map(([name, n]) => (
+                <Bar key={name} label={name} count={n} max={landscape.companies[0][1]} />
+              ))}
+            </div>
+            <div className="card space-y-2">
+              <div className="text-sm font-semibold">Categories</div>
+              {landscape.categories.map(([name, n]) => (
+                <Bar key={name} label={name} count={n} max={landscape.categories[0][1]} />
+              ))}
+            </div>
+            <div className="card space-y-2">
+              <div className="text-sm font-semibold">Regions</div>
+              {landscape.regions.map(([name, n]) => (
+                <Bar key={name} label={name} count={n} max={landscape.regions[0][1]} />
+              ))}
+            </div>
+          </div>
         </section>
       )}
 
