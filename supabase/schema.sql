@@ -57,8 +57,40 @@ create table if not exists saved_papers (
   primary key (user_id, paper_id)
 );
 
+alter table papers enable row level security;
+alter table institutions enable row level security;
+alter table authors enable row level security;
+alter table topics enable row level security;
+alter table paper_authors enable row level security;
+alter table paper_topics enable row level security;
 alter table saved_papers enable row level security;
+
+-- Public reference cache (OpenAlex mirror): readable by anyone, writable only
+-- via server (Prisma with the direct DB connection bypasses RLS). No write policies
+-- => anon/authenticated INSERT/UPDATE/DELETE via PostgREST are denied.
+drop policy if exists "public_read" on papers;
+create policy "public_read" on papers for select using (true);
+drop policy if exists "public_read" on institutions;
+create policy "public_read" on institutions for select using (true);
+drop policy if exists "public_read" on authors;
+create policy "public_read" on authors for select using (true);
+drop policy if exists "public_read" on topics;
+create policy "public_read" on topics for select using (true);
+drop policy if exists "public_read" on paper_authors;
+create policy "public_read" on paper_authors for select using (true);
+drop policy if exists "public_read" on paper_topics;
+create policy "public_read" on paper_topics for select using (true);
 
 drop policy if exists "own_saved" on saved_papers;
 create policy "own_saved" on saved_papers
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- AI cache: server-only. No policies => denied for anon/authenticated via
+-- PostgREST; Prisma with the direct DB connection still works.
+create table if not exists ai_cache (
+  key text primary key,
+  response jsonb not null,
+  expires_at timestamptz not null,
+  created_at timestamptz not null default now()
+);
+alter table ai_cache enable row level security;
