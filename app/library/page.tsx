@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { supabaseServer, isSupabaseConfigured } from "@/lib/supabase-server";
 import { db } from "@/lib/db";
 import Link from "next/link";
+import AiHistory from "@/components/AiHistory";
 
 export const metadata: Metadata = {
   title: "My Library",
@@ -51,14 +52,20 @@ export default async function LibraryPage() {
     return <p>Library temporarily unavailable (DB not migrated?). Run `npx prisma migrate dev`.</p>;
   }
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <h1 className="font-display text-3xl font-black tracking-tight">⭐ My Library</h1>
       {saved.length === 0 && <p className="text-sm text-ink/50 dark:text-paper/50">No saved papers yet.</p>}
       {saved.map((s) => (
         <div key={s.paperId} className="card !p-3 text-sm">
-          {s.paper.title}
+          <Link
+            href={`/papers/${encodeURIComponent(s.paper.openalexId?.split("/").pop() ?? s.paperId)}`}
+            className="font-medium hover:underline"
+          >
+            {s.paper.title}
+          </Link>
         </div>
       ))}
+      <AiHistory />
     </div>
   );
 }

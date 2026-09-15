@@ -86,6 +86,12 @@ paths:
         "200": { description: Brief plus fullText source flag }
         "401": { description: Sign in required }
         "501": { description: AI not configured }
+  /api/ai/history:
+    get:
+      summary: Recent AI runs from shared cache (auth required, max 50)
+      responses:
+        "200": { description: Runs with kind, label, model, preview }
+        "401": { description: Sign in required }
 # Server-rendered enrichments (not API routes; all optional, degrade silently):
 # Semantic Scholar TLDRs, Unpaywall PDFs, Wikipedia summaries, arXiv preprints,
 # DOAJ journals, GitHub code links.
