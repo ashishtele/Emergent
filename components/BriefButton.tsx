@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import CiteChip from "./CiteChip";
 
 export default function BriefButton({
   openalexId,
@@ -50,7 +51,10 @@ export default function BriefButton({
       {brief && (
         <>
           <div className="whitespace-pre-wrap text-sm leading-relaxed">{brief}</div>
-          <p className="mt-2 text-xs text-ink/50 dark:text-paper/50">{meta}</p>
+          <div className="mt-2 flex flex-wrap gap-1">
+            <CiteChip label={meta} title="brief provenance" />
+            {openalexId && <CiteChip openalexId={openalexId} />}
+          </div>
         </>
       )}
     </div>
