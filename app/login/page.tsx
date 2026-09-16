@@ -1,12 +1,26 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase-client";
+
+function friendlyLinkError(hash: string): string | null {
+  if (!hash.includes("error=")) return null;
+  if (hash.includes("otp_expired"))
+    return "That login link expired or was already used — request a fresh one below.";
+  return "That login link didn't work — request a fresh one below.";
+}
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState<"otp" | "password" | "signup">("password");
   const [msg, setMsg] = useState("");
+  useEffect(() => {
+    const err = friendlyLinkError(window.location.hash);
+    if (err) {
+      setMsg(err);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
     return <p className="text-sm">Auth not configured. Add Supabase keys to .env.local.</p>;
   }
@@ -15,7 +29,10 @@ export default function LoginPage() {
     const sb = supabaseBrowser();
     const { error } =
       mode === "otp"
-        ? await sb.auth.signInWithOtp({ email })
+        ? await sb.auth.signInWithOtp({
+            email,
+            options: { emailRedirectTo: `${window.location.origin}/login` },
+          })
         : mode === "signup"
           ? await sb.auth.signUp({ email, password })
           : await sb.auth.signInWithPassword({ email, password });
