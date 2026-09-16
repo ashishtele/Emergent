@@ -17,6 +17,10 @@ describe("searchQuerySchema", () => {
     expect(searchQuerySchema.safeParse({ q: "a", type: "nope" }).success).toBe(false);
     expect(searchQuerySchema.safeParse({ q: "a", page: "0" }).success).toBe(false);
   });
+  it("accepts optional rerank flag", () => {
+    expect(searchQuerySchema.parse({ q: "AI", rerank: "true" }).rerank).toBe(true);
+    expect(searchQuerySchema.parse({ q: "AI" }).rerank).toBeUndefined();
+  });
 });
 
 describe("idParamSchema", () => {

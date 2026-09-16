@@ -43,6 +43,7 @@ function Results() {
   const type = sp.get("type") ?? "works";
   const page = parseInt(sp.get("page") ?? "1");
   const oa = sp.get("oa") === "true";
+  const rerank = sp.get("rerank") === "true";
   const [data, setData] = useState<any>(null);
   const [err, setErr] = useState("");
   const [input, setInput] = useState(q);
@@ -53,11 +54,13 @@ function Results() {
     if (!q) return;
     setData(null);
     setErr("");
-    fetch(`/api/search?q=${encodeURIComponent(q)}&type=${type}&page=${page}${oa ? "&oa=true" : ""}`)
+    fetch(
+      `/api/search?q=${encodeURIComponent(q)}&type=${type}&page=${page}${oa ? "&oa=true" : ""}${rerank ? "&rerank=true" : ""}`,
+    )
       .then((r) => r.json())
       .then(setData)
       .catch(() => setErr("Research data is temporarily unavailable."));
-  }, [q, type, page, oa]);
+  }, [q, type, page, oa, rerank]);
 
   const nav = (patch: Record<string, string>) => {
     const p = new URLSearchParams(sp.toString());
@@ -96,6 +99,15 @@ function Results() {
             OA only
           </button>
         )}
+        {type === "works" && (
+          <button
+            onClick={() => nav({ rerank: rerank ? "false" : "true", page: "1" })}
+            className={rerank ? "chip-hot" : "chip"}
+            title="Jev-safe semantic rerank: Jev when configured, heuristic fallback otherwise"
+          >
+            ✨ Rerank
+          </button>
+        )}
       </div>
       {err && <p>{err}</p>}
       {!data && !err && <p>Loading…</p>}
@@ -103,6 +115,8 @@ function Results() {
         <>
           <p className="text-sm text-ink/60 dark:text-paper/60">
             {data.meta?.count?.toLocaleString()} results for “{q}”
+            {data.ranking === "jev" && " · ✨ Jev-ranked"}
+            {data.ranking === "heuristic" && " · Basic ranking"}
           </p>
           {(data.results ?? []).map((r: any) => {
             const id = shortId(r.id);
