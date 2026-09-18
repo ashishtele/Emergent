@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   readingPathPrompt,
+  readingWhyPrompt,
   parseReadingPath,
   cacheKey,
   isAiConfigured,
@@ -146,5 +147,25 @@ describe("aiConfig/aiClient", () => {
       if (prev === undefined) delete process.env.AI_API_KEY;
       else process.env.AI_API_KEY = prev;
     }
+  });
+});
+
+describe("readingWhyPrompt", () => {
+  it("asks for why-sentences in the given order", () => {
+    const ps = [
+      { openalexId: "W1", title: "Foundations", year: "2020", cited_by_count: 9 },
+      { openalexId: "W2", title: "Frontier", year: "2024", cited_by_count: 1 },
+    ];
+    const p = readingWhyPrompt("RAG", ps);
+    expect(p).toContain("RAG");
+    expect(p).toContain("W1");
+    expect(p.indexOf("W1")).toBeLessThan(p.indexOf("W2"));
+    expect(p).toContain("same order");
+    expect(p).not.toContain('{"path"');
+  });
+  it("parses why-only replies end to end", () => {
+    const known = new Set(["W1", "W2"]);
+    const raw = JSON.stringify({ path: [{ openalexId: "W1", why: "start here" }] });
+    expect(parseReadingPath(raw, known)).toEqual([{ openalexId: "W1", why: "start here" }]);
   });
 });

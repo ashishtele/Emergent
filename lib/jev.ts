@@ -218,6 +218,18 @@ export function reorderByRank<T extends { id?: string; openalexId?: string }>(
   return ordered;
 }
 
+// Order a ranked shortlist for a reading path: foundational first,
+// methods next, cutting-edge last; composite breaks ties within a level.
+const LEVEL_ORDER = ["foundational", "methods", "cutting_edge"];
+
+export function orderForReadingPath(ranked: RankedPaper[]): RankedPaper[] {
+  const levelRank = (level: string) => {
+    const i = LEVEL_ORDER.indexOf(level);
+    return i === -1 ? LEVEL_ORDER.length : i;
+  };
+  return [...ranked].sort((a, b) => levelRank(a.level) - levelRank(b.level) || b.composite - a.composite);
+}
+
 // Main entry: Jev when possible, heuristic otherwise. Never throws for missing
 // key — only for DB misuse (cache is best-effort in the route, not here).
 export async function rankPapers(

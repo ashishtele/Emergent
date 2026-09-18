@@ -75,6 +75,17 @@ export function readingPathPrompt(topic: string, papers: PathPaper[]): string {
   ].join("\n");
 }
 
+export function readingWhyPrompt(topic: string, papers: PathPaper[]): string {
+  const list = papers.map((p, i) => `${i + 1}. "${p.title}" [${p.openalexId}]`).join("\n");
+  return [
+    `You are a research guide. Topic: ${topic}.`,
+    `For each paper below in the given reading order, write one sentence under 25 words on why to read it and where it fits.`,
+    `Reply with a single JSON object and nothing else: no preamble, no explanation. It must have one key, "path", whose value is an array of exactly ${papers.length} items in the same order.`,
+    `Each item has two string fields: "openalexId" copied exactly from the paper list, and "why", the sentence.`,
+    `Papers:\n${list}`,
+  ].join("\n");
+}
+
 // Free-tier models often echo instructions (including any example JSON) before
 // answering. Collect every top-level balanced {...} block so callers can prefer
 // the LAST one — the actual answer — over echoed prompt text.

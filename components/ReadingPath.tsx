@@ -31,7 +31,15 @@ export default function ReadingPath({ topic, topicId }: { topic: string; topicId
       return;
     }
     setPath(j.path);
-    setMsg(j.cached ? "From cache ✓" : "Fresh from AI ✓");
+    setMsg(
+      j.cached
+        ? "From cache ✓"
+        : j.ranking === "jev"
+          ? "✨ Jev-selected ✓"
+          : j.prose
+            ? "Fresh from AI ✓"
+            : "Basic selection ✓",
+    );
   };
 
   return (

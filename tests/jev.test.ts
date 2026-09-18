@@ -9,6 +9,7 @@ import {
   rankPapers,
   toJevPapers,
   reorderByRank,
+  orderForReadingPath,
 } from "../lib/jev";
 import { rankSchema } from "../lib/validators";
 
@@ -140,6 +141,33 @@ describe("toJevPapers/reorderByRank", () => {
   });
 });
 
+describe("orderForReadingPath", () => {
+  const mk = (openalexId: string, level: string, composite: number) => ({
+    openalexId,
+    title: openalexId,
+    relevance: 0.5,
+    emergence: 1,
+    rigor: 1,
+    level,
+    confidence: 0.8,
+    composite,
+  });
+  it("orders foundational -> methods -> cutting_edge, composite breaks ties", () => {
+    const input = [
+      mk("C", "cutting_edge", 0.9),
+      mk("M", "methods", 0.1),
+      mk("F1", "foundational", 0.2),
+      mk("F2", "foundational", 0.8),
+    ];
+    const out = orderForReadingPath(input);
+    expect(out.map((p) => p.openalexId)).toEqual(["F2", "F1", "M", "C"]);
+    expect(input[0].openalexId).toBe("C"); // no mutation
+  });
+  it("sends unknown levels last", () => {
+    const out = orderForReadingPath([mk("X", "exclude", 0.99), mk("F", "foundational", 0.1)]);
+    expect(out.map((p) => p.openalexId)).toEqual(["F", "X"]);
+  });
+});
 describe("compositeScore clamping", () => {
   it("clamps out-of-range inputs", () => {
     expect(compositeScore(-2, 99, -1)).toBe(0.3);
