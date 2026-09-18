@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
     const { source, ranked } = await rankPapers(topic, toJevPapers(results));
     const selected = orderForReadingPath(ranked).slice(0, 5);
-    if (selected.length === 0) return apiError("No papers found for this topic", 404);
+    if (selected.length === 0) return apiError("No suitable papers found for this topic", 404);
 
     const whys = new Map<string, string>(selected.map((s) => [s.openalexId, ""]));
     let prose = false;
