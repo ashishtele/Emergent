@@ -1,4 +1,4 @@
-# Emergent
+## Emergent
 
 Discovering emerging trends — search papers, researchers, institutions and topics via OpenAlex.
 
