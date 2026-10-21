@@ -4,11 +4,12 @@ import SearchClient from "@/components/SearchClient";
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: { q?: string; type?: string };
+  searchParams: Promise<{ q?: string; type?: string }>;
 }): Promise<Metadata> {
-  const q = searchParams.q?.trim();
+  const sp = await searchParams;
+  const q = sp.q?.trim();
   if (!q) return { title: "Search", description: "Search millions of papers, researchers and topics." };
-  const type = searchParams.type ?? "works";
+  const type = sp.type ?? "works";
   const label = type === "works" ? "papers" : type;
   return {
     title: `Results for “${q.length > 60 ? `${q.slice(0, 60)}…` : q}”`,

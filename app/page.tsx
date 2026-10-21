@@ -1,11 +1,9 @@
-import dynamic from "next/dynamic";
 import Trending from "@/components/Trending";
 import StatsStrip from "@/components/StatsStrip";
 import TermsMarquee from "@/components/TermsMarquee";
 import Reveal from "@/components/Reveal";
+import HeroGalaxy from "@/components/HeroGalaxyLazy";
 import Link from "next/link";
-
-const HeroGalaxy = dynamic(() => import("@/components/HeroGalaxy"), { ssr: false });
 
 const FEATURES = [
   {

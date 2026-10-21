@@ -11,9 +11,10 @@ import { Suspense } from "react";
 
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
-    const t: any = await openAlex(`/topics/${encodeURIComponent(decodeURIComponent(params.id))}`);
+    const { id } = await params;
+    const t: any = await openAlex(`/topics/${encodeURIComponent(decodeURIComponent(id))}`);
     return {
       title: t.display_name,
       description: `Explore ${t.works_count?.toLocaleString() ?? ""} papers on ${t.display_name} — top works, trends and reading paths.`,
@@ -65,8 +66,9 @@ async function OpenJournals({ topicName }: { topicName: string }) {
   );
 }
 
-export default async function TopicPage({ params }: { params: { id: string } }) {
-  const id = decodeURIComponent(params.id);
+export default async function TopicPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: rawId } = await params;
+  const id = decodeURIComponent(rawId);
   let topic: any = null;
   try {
     topic = await openAlex(`/topics/${encodeURIComponent(id)}`);

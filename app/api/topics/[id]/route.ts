@@ -3,8 +3,9 @@ import { openAlex } from "@/lib/openalex";
 import { idParamSchema } from "@/lib/validators";
 import { apiError, badRequest } from "@/lib/api-error";
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
-  const parsed = idParamSchema.safeParse({ id: decodeURIComponent(params.id) });
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id: rawId } = await params;
+  const parsed = idParamSchema.safeParse({ id: decodeURIComponent(rawId) });
   if (!parsed.success) return badRequest("Invalid id");
   const id = parsed.data.id;
   try {
