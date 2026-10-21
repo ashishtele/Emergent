@@ -10,9 +10,10 @@ import Link from "next/link";
 
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
-    const w: any = await openAlex(`/works/${encodeURIComponent(decodeURIComponent(params.id))}`);
+    const { id } = await params;
+    const w: any = await openAlex(`/works/${encodeURIComponent(decodeURIComponent(id))}`);
     const authors = (w.authorships ?? [])
       .slice(0, 3)
       .map((a: any) => a.author?.display_name)
@@ -36,17 +37,18 @@ export default async function PaperPage({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams?: { tab?: string };
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ tab?: string }>;
 }) {
-  const id = decodeURIComponent(params.id);
+  const [{ id: rawId }, sp] = await Promise.all([params, searchParams]);
+  const id = decodeURIComponent(rawId);
   let w: any = null;
   try {
     w = await openAlex(`/works/${encodeURIComponent(id)}`);
   } catch {
     return <p>Research data is temporarily unavailable. Please try again in a moment.</p>;
   }
-  const tab = searchParams?.tab === "read" ? "read" : "overview";
+  const tab = sp?.tab === "read" ? "read" : "overview";
   const pid = shortId(w.id);
   const abstract = decodeAbstract(w.abstract_inverted_index);
   const [tldr, oa] = w.doi

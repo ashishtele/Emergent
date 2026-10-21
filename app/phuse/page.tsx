@@ -73,10 +73,11 @@ function topEntries(m: Map<string, number>, n: number) {
 const INPUT = "field !py-2 text-sm";
 const LABEL = "mb-1 block font-semibold uppercase tracking-widest text-ink/50 dark:text-paper/50";
 
-export default async function PhusePage({ searchParams }: { searchParams?: SP }) {
-  const f = parseFilters(searchParams);
-  const page = Math.max(1, parseInt(searchParams?.page ?? "1") || 1);
-  const docId = searchParams?.doc ?? null;
+export default async function PhusePage({ searchParams }: { searchParams: Promise<SP> }) {
+  const sp = await searchParams;
+  const f = parseFilters(sp);
+  const page = Math.max(1, parseInt(sp?.page ?? "1") || 1);
+  const docId = sp?.doc ?? null;
 
   let records: Awaited<ReturnType<typeof fetchArchive>>["records"] = [];
   let total = 0;

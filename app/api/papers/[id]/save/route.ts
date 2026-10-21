@@ -5,9 +5,10 @@ import { idParamSchema } from "@/lib/validators";
 import { apiError } from "@/lib/api-error";
 import { randomUUID } from "crypto";
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!isSupabaseConfigured()) return apiError("Auth not configured. Add Supabase keys.", 501);
-  const parsed = idParamSchema.safeParse({ id: decodeURIComponent(params.id) });
+  const { id: rawId } = await params;
+  const parsed = idParamSchema.safeParse({ id: decodeURIComponent(rawId) });
   if (!parsed.success) return apiError("Invalid id", 400);
   const openalexShort = parsed.data.id;
   const { title } = await req.json().catch(() => ({}) as any);
@@ -39,15 +40,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!isSupabaseConfigured()) return apiError("Auth not configured.", 501);
+  const { id: rawId } = await params;
   const supabase = supabaseServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return apiError("Sign in required", 401);
   try {
-    const openalexShort = decodeURIComponent(params.id);
+    const openalexShort = decodeURIComponent(rawId);
     const paper = await db.paper.findUnique({
       where: { openalexId: `https://openalex.org/${openalexShort}` },
     });

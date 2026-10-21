@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { openAlex } from "@/lib/openalex";
+import InstitutionsGlobe from "@/components/InstitutionsGlobeLazy";
 
 export const metadata: Metadata = {
   title: "Institutions Globe",
   description: "See where research lives — top institutions mapped on a living globe.",
 };
-
-const InstitutionsGlobe = dynamic(() => import("@/components/InstitutionsGlobe"), { ssr: false });
 
 function shortId(u: string) {
   return u?.split("/").pop() ?? u;
