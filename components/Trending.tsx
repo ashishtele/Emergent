@@ -1,19 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getTrending, type TrendingPayload } from "@/lib/trending-client";
 
 export default function Trending() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<TrendingPayload | null>(null);
   useEffect(() => {
-    fetch("/api/topics/trending")
-      .then((r) => r.json())
-      .then(setData)
-      .catch(() => {});
+    let alive = true;
+    getTrending().then((d) => {
+      if (alive) setData(d);
+    });
+    return () => {
+      alive = false;
+    };
   }, []);
-  if (!data) return <p className="text-sm text-ink/40 dark:text-paper/40">Loading trends…</p>;
+  if (!data) return <p className="text-sm text-ink/60 dark:text-paper/60">Loading trends…</p>;
   return (
     <div className="flex flex-wrap gap-2 text-sm">
-      {(data.trending ?? []).map((t: any) => (
+      {(data.trending ?? []).map((t) => (
         <Link
           key={t.term}
           href={`/search?q=${encodeURIComponent(t.term)}`}

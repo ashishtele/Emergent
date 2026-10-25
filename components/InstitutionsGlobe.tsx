@@ -1,11 +1,12 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
-import dynamic from "next/dynamic";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import { COLORS } from "@/lib/colors";
+import { useCoarsePointer, useReducedMotion } from "@/lib/use-media-query";
 // r3f-globe ships without perfect TS props, so we loosen it once here
 import GlobeImpl from "r3f-globe";
 const R3fGlobe = GlobeImpl as any;
@@ -39,6 +40,8 @@ function shortId(url?: string) {
 export default function InstitutionsGlobe() {
   const { resolvedTheme } = useTheme();
   const dark = resolvedTheme !== "light";
+  const reducedMotion = useReducedMotion();
+  const coarsePointer = useCoarsePointer();
   const router = useRouter();
   const [points, setPoints] = useState<GlobePoint[]>(FALLBACK);
   const [hovered, setHovered] = useState<string | null>(null);
@@ -66,7 +69,6 @@ export default function InstitutionsGlobe() {
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const arcs = useMemo(() => {
@@ -86,23 +88,28 @@ export default function InstitutionsGlobe() {
     <div className="relative overflow-hidden rounded-3xl border border-ink/10 dark:border-white/10">
       <div className="flex flex-wrap items-baseline justify-between gap-2 px-4 pt-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">Live map</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent-ink">Live map</p>
           <h2 className="font-display text-xl font-bold">Where research lives</h2>
         </div>
-        <p className="text-xs text-ink/50 dark:text-paper/50">
-          {points.length} institutions · drag to orbit · hover a dot{hovered ? ` — ${hovered}` : ""}
+        <p className="text-xs text-ink/60 dark:text-paper/60">
+          {points.length} institutions · {coarsePointer ? "tap a dot" : "drag to orbit"} · hover a dot
+          {hovered ? ` — ${hovered}` : ""}
         </p>
       </div>
-      <div className="h-[440px] w-full cursor-grab active:cursor-grabbing md:h-[520px]">
+      <p className="sr-only">
+        Interactive globe of {points.length} institutions. The institution list below offers the same
+        destinations with keyboard access.
+      </p>
+      <div aria-hidden="true" className="h-[440px] w-full cursor-grab active:cursor-grabbing md:h-[520px]">
         <Canvas
           dpr={[1, 1.75]}
           camera={{ position: [0, 30, 285], fov: 42 }}
           gl={{ antialias: true, alpha: true }}
         >
           <Suspense fallback={null}>
-            {/* eslint-disable-next-line react/no-unknown-property */}
+            {}
             <ambientLight intensity={1.1} />
-            {/* eslint-disable-next-line react/no-unknown-property */}
+            {}
             <directionalLight position={[100, 60, 80]} intensity={1} />
             <R3fGlobe
               globeImageUrl={
@@ -112,7 +119,7 @@ export default function InstitutionsGlobe() {
               }
               bumpImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-topology.png"
               backgroundColor="rgba(0,0,0,0)"
-              atmosphereColor={dark ? "#E8500A" : "#7DD3FC"}
+              atmosphereColor={dark ? COLORS.accent : COLORS.sky}
               atmosphereAltitude={0.18}
               pointsData={points}
               pointLat="lat"
@@ -120,7 +127,7 @@ export default function InstitutionsGlobe() {
               pointLabel={(d: any) =>
                 `${d.name}${d.works ? ` · ${Number(d.works).toLocaleString()} works` : ""}`
               }
-              pointColor={() => (hovered ? "#E8500A" : dark ? "#FAF7F1" : "#E8500A")}
+              pointColor={() => (hovered ? COLORS.accent : dark ? COLORS.paper : COLORS.accent)}
               pointAltitude={0.02}
               pointRadius="size"
               pointResolution={16}
@@ -144,17 +151,19 @@ export default function InstitutionsGlobe() {
               arcStroke={0.7}
               arcDashLength={0.5}
               arcDashGap={0.25}
-              arcDashAnimateTime={2500}
+              arcDashAnimateTime={reducedMotion ? 0 : 2500}
             />
-            <OrbitControls
-              enablePan={false}
-              enableZoom={false}
-              rotateSpeed={0.45}
-              autoRotate
-              autoRotateSpeed={0.5}
-              minPolarAngle={Math.PI * 0.2}
-              maxPolarAngle={Math.PI * 0.85}
-            />
+            {!coarsePointer && (
+              <OrbitControls
+                enablePan={false}
+                enableZoom={false}
+                rotateSpeed={0.45}
+                autoRotate={!reducedMotion}
+                autoRotateSpeed={0.5}
+                minPolarAngle={Math.PI * 0.2}
+                maxPolarAngle={Math.PI * 0.85}
+              />
+            )}
           </Suspense>
         </Canvas>
       </div>
@@ -162,6 +171,3 @@ export default function InstitutionsGlobe() {
     </div>
   );
 }
-
-// keep Next from SSR-ing WebGL at build time when used via `dynamic(ssr:false)` anyway
-export const InstitutionsGlobeDynamic = dynamic(() => Promise.resolve(InstitutionsGlobe), { ssr: false });
