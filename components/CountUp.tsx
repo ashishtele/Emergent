@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "@/lib/use-media-query";
 
 export default function CountUp({
   to,
@@ -17,7 +18,12 @@ export default function CountUp({
   const ref = useRef<HTMLSpanElement>(null);
   const [val, setVal] = useState(0);
   const started = useRef(false);
+  const reducedMotion = useReducedMotion();
   useEffect(() => {
+    if (reducedMotion) {
+      setVal(to);
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
@@ -37,7 +43,7 @@ export default function CountUp({
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [to, duration]);
+  }, [to, duration, reducedMotion]);
   return (
     <span ref={ref} className="tabular-nums">
       {prefix}

@@ -45,7 +45,8 @@ export default function AiHistory() {
             <button
               key={k}
               onClick={() => setFilter(k)}
-              className={`rounded-full px-2 py-0.5 ${
+              aria-pressed={filter === k}
+              className={`rounded-full px-3 py-1.5 ${
                 filter === k ? "bg-ink text-paper dark:bg-paper dark:text-ink" : "bg-ink/10 dark:bg-paper/10"
               }`}
             >
@@ -63,46 +64,48 @@ export default function AiHistory() {
         <p className="text-xs text-ink/60 dark:text-paper/60">No runs yet — generate a path or brief.</p>
       )}
       {shown.length > 0 && (
-        <table className="w-full text-left text-xs">
-          <thead>
-            <tr className="text-ink/60 dark:text-paper/60">
-              <th className="py-1 pr-2 font-medium">Run</th>
-              <th className="py-1 pr-2 font-medium">Model</th>
-              <th className="py-1 font-medium">Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {shown.map((r) => (
-              <tr key={r.key} className="border-t border-ink/10 align-top dark:border-paper/10">
-                <td className="py-1.5 pr-2">
-                  <button
-                    onClick={() => setOpen(open === r.key ? null : r.key)}
-                    className="text-left hover:underline"
-                  >
-                    <span className="mr-1 font-medium">{r.kind}</span>
-                    <span className="text-ink/60 dark:text-paper/60">{r.label.slice(0, 60)}</span>
-                  </button>
-                  {open === r.key && (
-                    <div className="mt-1 space-y-1">
-                      <div className="flex flex-wrap gap-1">
-                        <CiteChip label={r.kind} title="run kind" />
-                        {r.model && <CiteChip label={r.model} title="model" />}
-                      </div>
-                      <pre className="max-h-32 overflow-auto whitespace-pre-wrap rounded bg-ink/5 p-2 font-mono text-[11px] dark:bg-paper/5">
-                        {r.preview}
-                        {`\n—\nkey: ${r.key}\nexpires: ${r.expiresAt}`}
-                      </pre>
-                    </div>
-                  )}
-                </td>
-                <td className="py-1.5 pr-2 font-mono text-[11px]">{r.model ?? "—"}</td>
-                <td className="whitespace-nowrap py-1.5 text-ink/60 dark:text-paper/60">
-                  {new Date(r.createdAt).toLocaleDateString()}
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[320px] text-left text-xs">
+            <thead>
+              <tr className="text-ink/60 dark:text-paper/60">
+                <th className="py-1 pr-2 font-medium">Run</th>
+                <th className="py-1 pr-2 font-medium">Model</th>
+                <th className="py-1 font-medium">Created</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {shown.map((r) => (
+                <tr key={r.key} className="border-t border-ink/10 align-top dark:border-paper/10">
+                  <td className="py-1.5 pr-2">
+                    <button
+                      onClick={() => setOpen(open === r.key ? null : r.key)}
+                      className="text-left hover:underline"
+                    >
+                      <span className="mr-1 font-medium">{r.kind}</span>
+                      <span className="text-ink/60 dark:text-paper/60">{r.label.slice(0, 60)}</span>
+                    </button>
+                    {open === r.key && (
+                      <div className="mt-1 space-y-1">
+                        <div className="flex flex-wrap gap-1">
+                          <CiteChip label={r.kind} title="run kind" />
+                          {r.model && <CiteChip label={r.model} title="model" />}
+                        </div>
+                        <pre className="max-h-32 overflow-auto whitespace-pre-wrap rounded bg-ink/5 p-2 font-mono text-[11px] dark:bg-paper/5">
+                          {r.preview}
+                          {`\n—\nkey: ${r.key}\nexpires: ${r.expiresAt}`}
+                        </pre>
+                      </div>
+                    )}
+                  </td>
+                  <td className="py-1.5 pr-2 font-mono text-[11px]">{r.model ?? "—"}</td>
+                  <td className="whitespace-nowrap py-1.5 text-ink/60 dark:text-paper/60">
+                    {new Date(r.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { COLORS } from "@/lib/colors";
 
 export const runtime = "edge";
 export const size = { width: 1200, height: 630 };
@@ -14,12 +15,12 @@ export default function OgImage() {
         flexDirection: "column",
         justifyContent: "center",
         padding: "80px",
-        background: "#14100B",
-        color: "#FAF7F1",
+        background: COLORS.coal,
+        color: COLORS.paper,
         fontFamily: "Georgia, serif",
       }}
     >
-      <div style={{ fontSize: 28, letterSpacing: 8, color: "#E8500A", fontWeight: 700 }}>
+      <div style={{ fontSize: 28, letterSpacing: 8, color: COLORS.accent, fontWeight: 700 }}>
         THE RESEARCH COMPASS
       </div>
       <div style={{ fontSize: 84, fontWeight: 900, lineHeight: 1.05, marginTop: 16 }}>

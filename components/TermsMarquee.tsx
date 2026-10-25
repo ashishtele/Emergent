@@ -1,14 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getTrending } from "@/lib/trending-client";
 
 export default function TermsMarquee() {
   const [terms, setTerms] = useState<string[]>([]);
   useEffect(() => {
-    fetch("/api/topics/trending")
-      .then((r) => r.json())
-      .then((d) => setTerms((d.trending ?? []).map((t: any) => t.term)))
-      .catch(() => {});
+    let alive = true;
+    getTrending().then((d) => {
+      if (alive) setTerms((d.trending ?? []).map((t) => t.term));
+    });
+    return () => {
+      alive = false;
+    };
   }, []);
   if (terms.length === 0) return null;
   const row = [...terms, ...terms];

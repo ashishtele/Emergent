@@ -54,14 +54,21 @@ function Results() {
 
   useEffect(() => {
     if (!q) return;
+    const controller = new AbortController();
     setData(null);
     setErr("");
     fetch(
       `/api/search?q=${encodeURIComponent(q)}&type=${type}&page=${page}${oa ? "&oa=true" : ""}${rerank ? "&rerank=true" : ""}`,
+      { signal: controller.signal },
     )
       .then((r) => r.json())
       .then(setData)
-      .catch(() => setErr("Research data is temporarily unavailable."));
+      .catch((error: unknown) => {
+        if (!(error instanceof Error && error.name === "AbortError")) {
+          setErr("Research data is temporarily unavailable.");
+        }
+      });
+    return () => controller.abort();
   }, [q, type, page, oa, rerank]);
 
   const nav = (patch: Record<string, string>) => {

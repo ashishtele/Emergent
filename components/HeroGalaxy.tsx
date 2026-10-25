@@ -5,6 +5,8 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars } from "@react-three/drei";
 import { useTheme } from "next-themes";
 import * as THREE from "three";
+import { COLORS } from "@/lib/colors";
+import { useReducedMotion } from "@/lib/use-media-query";
 
 // Pure ambient background — no labels, no clicks, no hover.
 // Just slow-drifting dust + faint constellation so headline stays king.
@@ -31,17 +33,16 @@ function Dust({ count = 220, dark }: { count?: number; dark: boolean }) {
   });
 
   return (
-    // eslint-disable-next-line react/no-unknown-property
     <points ref={ref}>
-      {/* eslint-disable-next-line react/no-unknown-property */}
+      {}
       <bufferGeometry>
-        {/* eslint-disable-next-line react/no-unknown-property */}
+        {}
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      {/* eslint-disable-next-line react/no-unknown-property */}
+      {}
       <pointsMaterial
         size={0.045}
-        color={dark ? "#FAF7F1" : "#16130E"}
+        color={dark ? COLORS.paper : COLORS.ink}
         transparent
         opacity={0.45}
         sizeAttenuation
@@ -59,12 +60,16 @@ function Core() {
     ref.current.position.y = Math.sin(t * 0.6) * 0.1;
   });
   return (
-    // eslint-disable-next-line react/no-unknown-property
     <mesh ref={ref} position={[0, 0, -1.5]}>
-      {/* eslint-disable-next-line react/no-unknown-property */}
+      {}
       <sphereGeometry args={[0.3, 32, 32]} />
-      {/* eslint-disable-next-line react/no-unknown-property */}
-      <meshStandardMaterial color="#E8500A" emissive="#E8500A" emissiveIntensity={1.1} roughness={0.3} />
+      {}
+      <meshStandardMaterial
+        color={COLORS.accent}
+        emissive={COLORS.accent}
+        emissiveIntensity={1.1}
+        roughness={0.3}
+      />
     </mesh>
   );
 }
@@ -72,6 +77,7 @@ function Core() {
 export default function HeroGalaxy() {
   const { resolvedTheme } = useTheme();
   const dark = resolvedTheme !== "light";
+  const reducedMotion = useReducedMotion();
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
@@ -82,26 +88,28 @@ export default function HeroGalaxy() {
             : "absolute inset-0 bg-[radial-gradient(55%_45%_at_50%_32%,rgba(232,80,10,0.10),transparent_70%)]"
         }
       />
-      <div className="absolute inset-0 opacity-70">
-        <Canvas
-          dpr={[1, 1.5]}
-          camera={{ position: [0, 0.4, 7.8], fov: 48 }}
-          gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-        >
-          <Suspense fallback={null}>
-            {/* eslint-disable-next-line react/no-unknown-property */}
-            <ambientLight intensity={dark ? 0.9 : 1.1} />
-            {/* eslint-disable-next-line react/no-unknown-property */}
-            <directionalLight position={[4, 5, 4]} intensity={1} />
-            {/* eslint-disable-next-line react/no-unknown-property */}
-            <pointLight position={[0, 0, 0]} color="#E8500A" intensity={5} distance={10} />
-            <Stars radius={30} depth={20} count={400} factor={2} saturation={0} fade speed={0.3} />
-            <Dust dark={dark} />
-            <Core />
-          </Suspense>
-        </Canvas>
-      </div>
-      <div className="absolute inset-0 bg-[radial-gradient(58%_52%_at_50%_42%,transparent_40%,var(--hero-fade)_80%)] [ --hero-fade:#FAF7F1 ] dark:[ --hero-fade:#14100B ]" />
+      {!reducedMotion && (
+        <div className="absolute inset-0 opacity-70">
+          <Canvas
+            dpr={[1, 1.5]}
+            camera={{ position: [0, 0.4, 7.8], fov: 48 }}
+            gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+          >
+            <Suspense fallback={null}>
+              {}
+              <ambientLight intensity={dark ? 0.9 : 1.1} />
+              {}
+              <directionalLight position={[4, 5, 4]} intensity={1} />
+              {}
+              <pointLight position={[0, 0, 0]} color={COLORS.accent} intensity={5} distance={10} />
+              <Stars radius={30} depth={20} count={400} factor={2} saturation={0} fade speed={0.3} />
+              <Dust dark={dark} />
+              <Core />
+            </Suspense>
+          </Canvas>
+        </div>
+      )}
+      <div className="absolute inset-0 bg-[radial-gradient(58%_52%_at_50%_42%,transparent_40%,var(--hero-fade)_80%)] [--hero-fade:#FAF7F1] dark:[--hero-fade:#14100B]" />
       <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-paper to-transparent dark:from-coal" />
     </div>
   );
