@@ -27,7 +27,7 @@ export default async function InstitutionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-accent">Map</p>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-accent-ink">Map</p>
         <h1 className="font-display text-4xl font-black tracking-tight">Institutions Globe</h1>
         <p className="mt-2 max-w-xl text-sm text-ink/60 dark:text-paper/60">
           Satellites-style view, but grounded — every dot is a real institution from OpenAlex. Hover for name,
@@ -41,7 +41,7 @@ export default async function InstitutionsPage() {
         {institutions.map((inst: any) => (
           <Link key={inst.id} href={`/institutions/${encodeURIComponent(shortId(inst.id))}`} className="card">
             <div className="font-display text-lg font-bold">{inst.display_name}</div>
-            <div className="mt-1 text-xs text-ink/50 dark:text-paper/50">
+            <div className="mt-1 text-xs text-ink/60 dark:text-paper/60">
               {inst.country_code ?? ""} {inst.type ? `· ${inst.type}` : ""} ·{" "}
               {inst.works_count?.toLocaleString()} works
             </div>

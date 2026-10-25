@@ -54,7 +54,11 @@ export default function ReadingPath({ topic, topicId }: { topic: string; topicId
           {busy ? "…" : "Generate"}
         </button>
       </div>
-      {msg && <p className="mb-2 text-xs text-ink/50 dark:text-paper/50">{msg}</p>}
+      {msg && (
+        <p role="status" aria-live="polite" className="mb-2 text-xs text-ink/60 dark:text-paper/60">
+          {msg}
+        </p>
+      )}
       {path && (
         <ol className="space-y-3 text-sm">
           {path.map((s, i) => (

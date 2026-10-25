@@ -9,9 +9,9 @@ export default function PrivacyPage() {
   return (
     <div className="max-w-2xl space-y-5">
       <div>
-        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-accent">Legal</p>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-accent-ink">Legal</p>
         <h1 className="font-display text-4xl font-black tracking-tight">Privacy Policy</h1>
-        <p className="mt-2 text-xs text-ink/50 dark:text-paper/50">Last updated September 2026</p>
+        <p className="mt-2 text-xs text-ink/60 dark:text-paper/60">Last updated September 2026</p>
       </div>
       <section className="space-y-2 text-sm leading-relaxed">
         <h2 className="font-display text-lg font-bold">What Emergent does</h2>

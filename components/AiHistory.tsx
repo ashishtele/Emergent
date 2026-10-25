@@ -54,14 +54,18 @@ export default function AiHistory() {
           ))}
         </div>
       </div>
-      {msg && <p className="text-xs text-ink/50 dark:text-paper/50">{msg}</p>}
+      {msg && (
+        <p role="status" aria-live="polite" className="text-xs text-ink/60 dark:text-paper/60">
+          {msg}
+        </p>
+      )}
       {runs && shown.length === 0 && (
-        <p className="text-xs text-ink/50 dark:text-paper/50">No runs yet — generate a path or brief.</p>
+        <p className="text-xs text-ink/60 dark:text-paper/60">No runs yet — generate a path or brief.</p>
       )}
       {shown.length > 0 && (
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="text-ink/50 dark:text-paper/50">
+            <tr className="text-ink/60 dark:text-paper/60">
               <th className="py-1 pr-2 font-medium">Run</th>
               <th className="py-1 pr-2 font-medium">Model</th>
               <th className="py-1 font-medium">Created</th>

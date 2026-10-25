@@ -47,7 +47,11 @@ export default function BriefButton({
           </button>
         )}
       </div>
-      {meta && !brief && <p className="text-xs text-ink/50 dark:text-paper/50">{meta}</p>}
+      {meta && !brief && (
+        <p role="status" aria-live="polite" className="text-xs text-ink/60 dark:text-paper/60">
+          {meta}
+        </p>
+      )}
       {brief && (
         <>
           <div className="whitespace-pre-wrap text-sm leading-relaxed">{brief}</div>

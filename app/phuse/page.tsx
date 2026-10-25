@@ -52,7 +52,7 @@ function Bar({ label, count, max }: { label: string; count: number; max: number 
     <div className="space-y-0.5">
       <div className="flex items-baseline justify-between gap-2 text-xs">
         <span className="truncate">{label}</span>
-        <span className="shrink-0 tabular-nums text-ink/50 dark:text-paper/50">{count}</span>
+        <span className="shrink-0 tabular-nums text-ink/60 dark:text-paper/60">{count}</span>
       </div>
       <div className="h-1.5 rounded-full bg-ink/10 dark:bg-white/10">
         <div
@@ -71,7 +71,7 @@ function topEntries(m: Map<string, number>, n: number) {
 }
 
 const INPUT = "field !py-2 text-sm";
-const LABEL = "mb-1 block font-semibold uppercase tracking-widest text-ink/50 dark:text-paper/50";
+const LABEL = "mb-1 block font-semibold uppercase tracking-widest text-ink/60 dark:text-paper/60";
 
 export default async function PhusePage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
@@ -126,7 +126,9 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
   return (
     <div className="space-y-6">
       <div>
-        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-accent">Community hub</p>
+        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-accent-ink">
+          Community hub
+        </p>
         <h1 className="font-display text-4xl font-black tracking-tight">PHUSE</h1>
         <p className="mt-2 max-w-xl text-sm text-ink/60 dark:text-paper/60">
           The PHUSE archive — {total.toLocaleString()} materials from Connects, webinars and working groups.
@@ -135,7 +137,7 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
             href="https://phuse.global/Communications/PHUSE_Archive"
             target="_blank"
             rel="noreferrer"
-            className="text-accent hover:underline"
+            className="text-accent-ink hover:underline"
           >
             phuse.global ↗
           </a>
@@ -211,7 +213,7 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
             Reset
           </Link>
           {total > 0 && (
-            <span className="pb-2 text-sm text-ink/50 dark:text-paper/50">
+            <span className="pb-2 text-sm text-ink/60 dark:text-paper/60">
               {total.toLocaleString()} matches
             </span>
           )}
@@ -222,11 +224,11 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
         <section className="card space-y-3 !border-accent/40">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              <div className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-ink">
                 Now reading · PHUSE archive
               </div>
               <div className="break-words font-display text-xl font-bold leading-snug">{selected.title}</div>
-              <div className="mt-1 text-xs text-ink/50 dark:text-paper/50">
+              <div className="mt-1 text-xs text-ink/60 dark:text-paper/60">
                 {[selected.author, selected.company, selected.event, selected.year, selected.city]
                   .filter(Boolean)
                   .join(" · ")}
@@ -250,7 +252,7 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
                 href={selectedUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="block text-sm text-accent hover:underline"
+                className="block text-sm text-accent-ink hover:underline"
               >
                 Open PDF in new tab ↗
               </a>
@@ -267,7 +269,7 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
       {landscape && landscape.companies.length > 0 && (
         <section>
           <h2 className="section-title mb-1">Industry landscape</h2>
-          <p className="mb-3 text-xs text-ink/50 dark:text-paper/50">
+          <p className="mb-3 text-xs text-ink/60 dark:text-paper/60">
             Who publishes here, in what — {landscape.span || "current filters"}
           </p>
           <div className="grid gap-3 md:grid-cols-3">
@@ -308,11 +310,11 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
                 <div key={r.id} className={`card !p-4 ${docId === r.id ? "!border-accent/50" : ""}`}>
                   <Link
                     href={qs(f, { doc: r.id, page: page > 1 ? String(page) : "" })}
-                    className="break-words font-medium leading-snug hover:text-accent"
+                    className="break-words font-medium leading-snug hover:text-accent-ink"
                   >
                     {r.title}
                   </Link>
-                  <div className="mt-1 text-xs text-ink/50 dark:text-paper/50">
+                  <div className="mt-1 text-xs text-ink/60 dark:text-paper/60">
                     {[r.author, r.company].filter(Boolean).join(", ")}
                     {" · "}
                     {[r.event, r.year, r.city, r.region].filter(Boolean).join(" · ")}
@@ -322,7 +324,7 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
                     {paper && (
                       <Link
                         href={qs(f, { doc: r.id, page: page > 1 ? String(page) : "" })}
-                        className="font-semibold text-accent hover:underline"
+                        className="font-semibold text-accent-ink hover:underline"
                       >
                         Read paper here →
                       </Link>
@@ -350,7 +352,7 @@ export default async function PhusePage({ searchParams }: { searchParams: Promis
                 ← Prev
               </Link>
             )}
-            <span className="px-2 py-1.5 text-xs text-ink/50 dark:text-paper/50">
+            <span className="px-2 py-1.5 text-xs text-ink/60 dark:text-paper/60">
               Page {page} of {pageCount.toLocaleString()}
             </span>
             {page < pageCount && (

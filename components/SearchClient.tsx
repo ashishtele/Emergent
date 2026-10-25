@@ -28,6 +28,8 @@ function SearchBox({
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        type="search"
+        aria-label="Search papers, researchers and topics"
         placeholder="Search papers, researchers, topics…"
         className="field min-w-0 flex-1"
       />
@@ -109,11 +111,19 @@ function Results() {
           </button>
         )}
       </div>
-      {err && <p>{err}</p>}
-      {!data && !err && <p>Loading…</p>}
+      {err && (
+        <p role="alert" className="text-sm">
+          {err}
+        </p>
+      )}
+      {!data && !err && (
+        <p role="status" aria-live="polite" className="text-sm">
+          Loading…
+        </p>
+      )}
       {data && (
         <>
-          <p className="text-sm text-ink/60 dark:text-paper/60">
+          <p role="status" aria-live="polite" className="text-sm text-ink/60 dark:text-paper/60">
             {data.meta?.count?.toLocaleString()} results for “{q}”
             {data.ranking === "jev" && " · ✨ Jev-ranked"}
             {data.ranking === "heuristic" && " · Basic ranking"}
@@ -143,13 +153,13 @@ function Results() {
               <Link key={r.id} href={href} className="card flex items-start justify-between gap-4 !p-4">
                 <div className="min-w-0">
                   <div className="break-words font-medium leading-snug">{r.title ?? r.display_name}</div>
-                  <div className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
+                  <div className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent-ink">
                     {kind}
                   </div>
                 </div>
                 <div className="w-20 shrink-0 text-right">
                   <div className="font-display text-xl font-black tabular-nums">{count.toLocaleString()}</div>
-                  <div className="text-[11px] text-ink/40 dark:text-paper/40">{unit}</div>
+                  <div className="text-[11px] text-ink/60 dark:text-paper/60">{unit}</div>
                 </div>
               </Link>
             );

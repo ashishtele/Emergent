@@ -64,6 +64,9 @@ export default function LoginPage() {
       <input
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        type="email"
+        autoComplete="email"
+        aria-label="Email address"
         placeholder="you@example.com"
         className="field !rounded-xl"
       />
@@ -72,6 +75,8 @@ export default function LoginPage() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          autoComplete={mode === "signup" ? "new-password" : "current-password"}
+          aria-label="Password"
           placeholder="Password (min 6 chars)"
           className="field !rounded-xl"
         />
@@ -79,8 +84,12 @@ export default function LoginPage() {
       <button onClick={run} className="btn-primary">
         {mode === "otp" ? "Send magic link" : mode === "signup" ? "Create account" : "Sign in"}
       </button>
-      {msg && <p className="text-sm">{msg}</p>}
-      <p className="text-xs text-ink/50 dark:text-paper/50">
+      {msg && (
+        <p role="status" aria-live="polite" className="text-sm">
+          {msg}
+        </p>
+      )}
+      <p className="text-xs text-ink/60 dark:text-paper/60">
         Password sign-in sends no email — use it while magic links are rate-limited.
       </p>
     </div>
