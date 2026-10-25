@@ -13,12 +13,22 @@ export default function SaveButton({ id, title }: { id: string; title: string })
     const j = await res.json().catch(() => ({}));
     setMsg(res.ok ? "Saved ✓" : (j.error ?? "Failed — sign in first."));
   };
+  const saving = msg === "Saving…";
   return (
     <div className="flex items-center gap-2">
-      <button onClick={save} className="btn-primary !px-5 !py-2 text-sm">
+      <button
+        onClick={save}
+        disabled={saving}
+        aria-busy={saving}
+        className="btn-primary !px-5 !py-2 text-sm disabled:opacity-50"
+      >
         Save Paper
       </button>
-      {msg && <span className="text-xs text-ink/60 dark:text-paper/60">{msg}</span>}
+      {msg && (
+        <span role="status" aria-live="polite" className="text-xs text-ink/60 dark:text-paper/60">
+          {msg}
+        </span>
+      )}
     </div>
   );
 }

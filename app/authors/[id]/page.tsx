@@ -41,7 +41,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ id: str
     <div className="space-y-4">
       <Link
         href="/search"
-        className="text-sm text-ink/40 hover:text-ink dark:text-paper/40 dark:hover:text-paper"
+        className="text-sm text-ink/60 hover:text-ink dark:text-paper/60 dark:hover:text-paper"
       >
         ← Back
       </Link>
@@ -60,7 +60,7 @@ export default async function AuthorPage({ params }: { params: Promise<{ id: str
             <Link
               key={t.id}
               href={`/topics/${encodeURIComponent(shortId(t.id))}`}
-              className="badge hover:!bg-accent hover:!text-white"
+              className="badge hover:!bg-accent-ink hover:!text-white dark:hover:!text-ink"
             >
               {t.display_name}
             </Link>

@@ -13,6 +13,7 @@ const config: Config = {
         ink: "#16130E",
         paper: "#FAF7F1",
         accent: "#E8500A",
+        "accent-ink": "var(--accent-ink)",
         moss: "#22301F",
         coal: "#14100B",
         soot: "#221C14",

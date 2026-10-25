@@ -64,7 +64,7 @@ export default async function PaperPage({
     <div className="max-w-3xl space-y-5">
       <Link
         href="/search"
-        className="text-sm text-ink/40 hover:text-ink dark:text-paper/40 dark:hover:text-paper"
+        className="text-sm text-ink/60 hover:text-ink dark:text-paper/60 dark:hover:text-paper"
       >
         ← Back to search
       </Link>
@@ -90,14 +90,14 @@ export default async function PaperPage({
           <Link
             key={t.id}
             href={`/topics/${encodeURIComponent(shortId(t.id))}`}
-            className="badge !bg-accent/10 !text-accent hover:!bg-accent hover:!text-white"
+            className="badge !bg-accent/10 !text-accent-ink hover:!bg-accent-ink hover:!text-white dark:hover:!text-ink"
           >
             {t.display_name}
           </Link>
         ))}
       </div>
       {w.doi && (
-        <a href={w.doi} className="text-sm text-accent hover:underline">
+        <a href={w.doi} className="text-sm text-accent-ink hover:underline">
           {w.doi}
         </a>
       )}
@@ -128,7 +128,7 @@ export default async function PaperPage({
                 href={pdfUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="block text-sm text-accent hover:underline"
+                className="block text-sm text-accent-ink hover:underline"
               >
                 Open PDF in new tab ↗
               </a>
@@ -145,7 +145,7 @@ export default async function PaperPage({
                   href={w.doi}
                   target="_blank"
                   rel="noreferrer"
-                  className="block text-sm text-accent hover:underline"
+                  className="block text-sm text-accent-ink hover:underline"
                 >
                   Publisher page ↗
                 </a>
@@ -167,7 +167,7 @@ export default async function PaperPage({
           </p>
           {tldr && (
             <div className="card !border-accent/30">
-              <div className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+              <div className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-accent-ink">
                 TLDR · Semantic Scholar
               </div>
               <p className="text-sm">{tldr.tldr}</p>
@@ -182,7 +182,7 @@ export default async function PaperPage({
                     <Link
                       key={u}
                       href={`/papers/${encodeURIComponent(shortId(u))}`}
-                      className="block py-0.5 text-xs text-accent hover:underline"
+                      className="block py-0.5 text-xs text-accent-ink hover:underline"
                     >
                       {shortId(u)}
                     </Link>
@@ -196,7 +196,7 @@ export default async function PaperPage({
                     <Link
                       key={u}
                       href={`/papers/${encodeURIComponent(shortId(u))}`}
-                      className="block py-0.5 text-xs text-accent hover:underline"
+                      className="block py-0.5 text-xs text-accent-ink hover:underline"
                     >
                       {shortId(u)}
                     </Link>
@@ -214,7 +214,7 @@ export default async function PaperPage({
                 {code.map((r) => (
                   <a key={r.url} href={r.url} target="_blank" rel="noreferrer" className="block text-sm">
                     <span className="font-medium hover:underline">{r.name}</span>{" "}
-                    <span className="text-xs text-ink/50 dark:text-paper/50">
+                    <span className="text-xs text-ink/60 dark:text-paper/60">
                       ★ {r.stars.toLocaleString()}
                     </span>
                     {r.description && (
@@ -223,7 +223,7 @@ export default async function PaperPage({
                   </a>
                 ))}
               </div>
-              <p className="mt-2 text-[11px] text-ink/40 dark:text-paper/40">
+              <p className="mt-2 text-[11px] text-ink/60 dark:text-paper/60">
                 GitHub search, may be approximate
               </p>
             </div>

@@ -13,14 +13,23 @@ export default function TermsMarquee() {
   if (terms.length === 0) return null;
   const row = [...terms, ...terms];
   return (
-    <div className="overflow-hidden border-y border-ink/10 py-3 dark:border-white/10" aria-hidden="true">
-      <div className="marquee-track flex w-max gap-8 whitespace-nowrap font-display text-lg font-bold text-ink/30 dark:text-paper/30">
-        {row.map((t, i) => (
-          <Link key={i} href={`/search?q=${encodeURIComponent(t)}`} className="hover:text-accent">
-            #{t.replace(/\s+/g, "")}
-          </Link>
-        ))}
+    <nav
+      aria-label="Trending research topics"
+      className="overflow-hidden border-y border-ink/10 py-3 dark:border-white/10"
+    >
+      <div className="marquee-track flex w-max gap-8 whitespace-nowrap font-display text-lg font-bold text-ink/60 dark:text-paper/60">
+        {row.map((t, i) =>
+          i >= terms.length ? (
+            <span key={i} aria-hidden="true">
+              #{t.replace(/\s+/g, "")}
+            </span>
+          ) : (
+            <Link key={i} href={`/search?q=${encodeURIComponent(t)}`} className="hover:text-accent-ink">
+              #{t.replace(/\s+/g, "")}
+            </Link>
+          ),
+        )}
       </div>
-    </div>
+    </nav>
   );
 }

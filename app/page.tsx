@@ -30,7 +30,7 @@ export default function Home() {
       <section className="relative overflow-hidden rounded-3xl border border-ink/10 px-4 pb-10 pt-10 dark:border-white/10 md:pt-14">
         <HeroGalaxy />
         <div className="relative z-10 pointer-events-none text-center">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-accent-ink">
             The research compass
           </p>
           <h1 className="mx-auto max-w-3xl font-display text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
@@ -40,13 +40,19 @@ export default function Home() {
             Millions of papers, distilled into trends, people and reading paths. Start with a question.
           </p>
           <form action="/search" className="pointer-events-auto mx-auto mt-8 flex max-w-xl gap-2">
-            <input name="q" placeholder="Try: AI agents, CRISPR, quantum…" className="field min-w-0 flex-1" />
+            <input
+              name="q"
+              type="search"
+              aria-label="Search papers, researchers and topics"
+              placeholder="Try: AI agents, CRISPR, quantum…"
+              className="field min-w-0 flex-1"
+            />
             <button className="btn-primary shrink-0">Search</button>
           </form>
-          <p className="mt-4 text-[11px] uppercase tracking-widest text-ink/40 dark:text-paper/40">
+          <p className="mt-4 text-[11px] uppercase tracking-widest text-ink/60 dark:text-paper/60">
             <Link
               href="/institutions"
-              className="pointer-events-auto underline underline-offset-4 hover:text-accent"
+              className="pointer-events-auto underline underline-offset-4 hover:text-accent-ink"
             >
               See where research lives →
             </Link>

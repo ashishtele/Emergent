@@ -54,7 +54,7 @@ export default async function LibraryPage() {
   return (
     <div className="space-y-4">
       <h1 className="font-display text-3xl font-black tracking-tight">⭐ My Library</h1>
-      {saved.length === 0 && <p className="text-sm text-ink/50 dark:text-paper/50">No saved papers yet.</p>}
+      {saved.length === 0 && <p className="text-sm text-ink/60 dark:text-paper/60">No saved papers yet.</p>}
       {saved.map((s) => (
         <div key={s.paperId} className="card !p-3 text-sm">
           <Link

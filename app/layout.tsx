@@ -37,39 +37,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${display.variable} ${sans.variable} min-h-screen bg-paper font-sans text-ink antialiased dark:bg-coal dark:text-paper`}
       >
         <Providers>
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+          >
+            Skip to content
+          </a>
           <header className="sticky top-0 z-10 border-b border-ink/10 bg-paper/85 backdrop-blur dark:border-white/10 dark:bg-coal/85">
             <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
               <Link href="/" className="font-display text-xl font-black tracking-tight">
                 Emergent<span className="text-accent">.</span>
               </Link>
               <nav className="flex flex-wrap items-center justify-end gap-1 text-sm">
-                <Link
-                  href="/search"
-                  className="rounded-full px-3 py-1.5 hover:bg-ink/5 dark:hover:bg-white/10"
-                >
+                <Link href="/search" className="rounded-full px-3 py-2 hover:bg-ink/5 dark:hover:bg-white/10">
                   Search
                 </Link>
-                <Link
-                  href="/topics"
-                  className="rounded-full px-3 py-1.5 hover:bg-ink/5 dark:hover:bg-white/10"
-                >
+                <Link href="/topics" className="rounded-full px-3 py-2 hover:bg-ink/5 dark:hover:bg-white/10">
                   Topics
                 </Link>
                 <Link
                   href="/institutions"
-                  className="rounded-full px-3 py-1.5 hover:bg-ink/5 dark:hover:bg-white/10"
+                  className="rounded-full px-3 py-2 hover:bg-ink/5 dark:hover:bg-white/10"
                 >
                   Globe
                 </Link>
-                <Link
-                  href="/phuse"
-                  className="rounded-full px-3 py-1.5 hover:bg-ink/5 dark:hover:bg-white/10"
-                >
+                <Link href="/phuse" className="rounded-full px-3 py-2 hover:bg-ink/5 dark:hover:bg-white/10">
                   PHUSE
                 </Link>
                 <Link
                   href="/library"
-                  className="rounded-full bg-ink px-4 py-1.5 text-paper hover:bg-accent dark:bg-paper dark:text-ink dark:hover:bg-accent dark:hover:text-white"
+                  className="rounded-full bg-ink px-4 py-2 text-paper hover:bg-accent-ink dark:bg-paper dark:text-ink dark:hover:bg-accent-ink dark:hover:text-ink"
                 >
                   Library
                 </Link>
@@ -79,9 +76,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
             </div>
           </header>
-          <main className="mx-auto max-w-5xl px-4 py-10">{children}</main>
+          <main id="main" className="mx-auto max-w-5xl px-4 py-10">
+            {children}
+          </main>
           <footer className="border-t border-ink/10 dark:border-white/10">
-            <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-xs text-ink/50 dark:text-paper/50">
+            <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-6 text-xs text-ink/60 dark:text-paper/60">
               <span className="font-display text-sm font-bold text-ink dark:text-paper">
                 Emergent<span className="text-accent">.</span>
               </span>

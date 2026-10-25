@@ -37,7 +37,7 @@ async function FreshPreprints({ topicName }: { topicName: string }) {
       {items.map((p) => (
         <a key={p.id} href={p.link} target="_blank" rel="noreferrer" className="card block !p-3 text-sm">
           <span className="break-words font-medium leading-snug">{p.title}</span>{" "}
-          <span className="text-ink/50 dark:text-paper/50">({p.published})</span>
+          <span className="text-ink/60 dark:text-paper/60">({p.published})</span>
         </a>
       ))}
     </div>
@@ -59,7 +59,7 @@ async function OpenJournals({ topicName }: { topicName: string }) {
           className="card block !p-3 text-sm"
         >
           <span className="break-words font-medium leading-snug">{j.title}</span>{" "}
-          <span className="text-ink/50 dark:text-paper/50">({j.publisher})</span>
+          <span className="text-ink/60 dark:text-paper/60">({j.publisher})</span>
         </a>
       ))}
     </div>
@@ -111,20 +111,20 @@ export default async function TopicPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="space-y-4">
-      <Link href="/" className="text-sm text-ink/40 hover:text-ink dark:text-paper/40 dark:hover:text-paper">
+      <Link href="/" className="text-sm text-ink/60 hover:text-ink dark:text-paper/60 dark:hover:text-paper">
         ← Home
       </Link>
       <h1 className="font-display text-3xl font-black tracking-tight">{topic.display_name}</h1>
       <p className="text-sm text-ink/60 dark:text-paper/60">{wiki ?? ""}</p>
-      <div className="text-xs text-ink/50 dark:text-paper/50">
+      <div className="text-xs text-ink/60 dark:text-paper/60">
         {topic.works_count?.toLocaleString()} papers
       </div>
       {activity.length > 0 && <ActivityBars activity={activity} />}
       <ReadingPath topic={topic.display_name} topicId={topicId} />
-      <Suspense fallback={<p className="text-sm text-ink/40 dark:text-paper/40">Loading fresh preprints…</p>}>
+      <Suspense fallback={<p className="text-sm text-ink/60 dark:text-paper/60">Loading fresh preprints…</p>}>
         <FreshPreprints topicName={name} />
       </Suspense>
-      <Suspense fallback={<p className="text-sm text-ink/40 dark:text-paper/40">Loading open journals…</p>}>
+      <Suspense fallback={<p className="text-sm text-ink/60 dark:text-paper/60">Loading open journals…</p>}>
         <OpenJournals topicName={name} />
       </Suspense>
       <div>
@@ -135,7 +135,7 @@ export default async function TopicPage({ params }: { params: Promise<{ id: stri
             href={`/papers/${encodeURIComponent(shortId(w.id))}`}
             className="card block !p-3 text-sm"
           >
-            {w.title} <span className="text-ink/50 dark:text-paper/50">({w.cited_by_count} cites)</span>
+            {w.title} <span className="text-ink/60 dark:text-paper/60">({w.cited_by_count} cites)</span>
           </Link>
         ))}
       </div>
